@@ -1,10 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
-  return (
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Gagal mengirim OTP");
+      setMessage(data.message || "Kode OTP berhasil dikirim");
+      // Navigate to verify page with reset mode
+      router.push(`/verify-otp?mode=reset&email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      setError(err.message || "Error");
+    } finally {
+      setLoading(false);
+    }
+  };
     <>
       <style
         dangerouslySetInnerHTML={{
@@ -96,7 +124,7 @@ export default function ForgotPasswordPage() {
               </p>
             </div>
 
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-8" onSubmit={handleSubmit}>
               {/* Email Input */}
               <div className="space-y-3">
                 <label
@@ -118,6 +146,8 @@ export default function ForgotPasswordPage() {
                     name="email"
                     placeholder="nama@email.com"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -125,11 +155,14 @@ export default function ForgotPasswordPage() {
               {/* Action Button */}
               <div className="pt-4">
                 <button
-                  className="w-full organic-gradient text-white py-5 rounded-md font-headline font-bold text-lg shadow-[0_10px_30px_rgba(21,66,18,0.15)] hover:shadow-[0_15px_40px_rgba(21,66,18,0.25)] transition-all transform active:scale-[0.98]"
+                  className="w-full organic-gradient text-white py-5 rounded-md font-headline font-bold text-lg shadow-[0_10px_30px_rgba(21,66,18,0.15)] hover:shadow-[0_15px_40px_rgba(21,66,18,0.25)] transition-all transform active:scale-[0.98] disabled:opacity-70"
                   type="submit"
+                  disabled={loading}
                 >
-                  Kirim Kode Verifikasi
+                  {loading ? "Mengirim..." : "Kirim Kode Verifikasi"}
                 </button>
+                {message && <div className="mt-3 text-sm text-green-700">{message}</div>}
+                {error && <div className="mt-3 text-sm text-red-700">{error}</div>}
               </div>
 
               {/* Help Navigation */}

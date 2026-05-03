@@ -1,9 +1,91 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function VerifyOTPPage() {
+  const router = useRouter();
+  const search = useSearchParams();
+  const mode = search.get("mode") || "register"; // 'register' or 'reset'
+  const email = search.get("email") || "";
+
+  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const inputsRef = useRef([]);
+
+  useEffect(() => {
+    // focus first input on mount
+    inputsRef.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index, value) => {
+    if (value.length > 1) value = value.slice(-1);
+    const next = [...digits];
+    next[index] = value;
+    setDigits(next);
+    if (value && inputsRef.current[index + 1]) {
+      inputsRef.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !digits[index] && inputsRef.current[index - 1]) {
+      inputsRef.current[index - 1].focus();
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    const otp = digits.join("");
+    if (otp.length !== 6) {
+      setError("Mohon isi 6 digit kode OTP");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (mode === "reset") {
+        // Verify OTP for reset flow
+        const res = await fetch("http://localhost:5000/api/auth/verify-reset-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Verifikasi gagal");
+
+        // store otp temporarily (session) and navigate to reset page
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("resetOtp", otp);
+        }
+        router.push(`/reset-password?email=${encodeURIComponent(email)}`);
+      } else {
+        // registration verification
+        const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Verifikasi gagal");
+
+        // on success receive token -> store and redirect
+        const token = data.data?.token;
+        if (token && typeof window !== "undefined") {
+          localStorage.setItem("token", token);
+        }
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setError(err.message || "Terjadi kesalahan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <style
@@ -11,152 +93,53 @@ export default function VerifyOTPPage() {
           __html: `
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@400,0,0,24&display=swap');
-        
         .font-headline { font-family: 'Manrope', sans-serif; }
         .font-body { font-family: 'Inter', sans-serif; }
-        
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .otp-input:focus {
-            box-shadow: 0 4px 12px rgba(21, 66, 18, 0.08);
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
       `,
         }}
       />
 
       <main className="min-h-screen flex flex-col md:flex-row overflow-hidden bg-[#f9f9f9] font-body text-[#1a1c1c]">
-        {/* Left Section: Eco-tech Illustration */}
-        <section className="hidden md:flex md:w-1/2 relative items-center justify-center bg-[#2d5a27] overflow-hidden">
-          {/* Background Texture */}
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#94f990] via-transparent to-transparent"></div>
-
-          <div className="relative z-10 w-full max-w-xl px-12 text-center">
-            <div className="mb-8 flex justify-center">
-              <div className="w-24 h-24 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                <span
-                  className="material-symbols-outlined text-white text-5xl"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  shield_person
-                </span>
-              </div>
-            </div>
-
-            <h1 className="font-headline font-extrabold text-4xl text-[#9dd090] tracking-tight leading-tight mb-6">
-              Membangun Masa Depan yang Lebih Bersih
-            </h1>
-            <p className="text-[#9dd090]/80 text-lg leading-relaxed">
-              Setiap langkah kecil dalam mengelola limbah berkontribusi pada
-              ekosistem yang berkelanjutan. Terima kasih telah menjaga keamanan
-              akun Anda.
-            </p>
-
-            <div className="mt-12">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="w-full h-80 object-cover rounded-xl shadow-2xl shadow-[#154212]/20 rotate-3 transform"
-                alt="Modern eco-friendly technology abstract concept with glowing green circuit patterns and organic leaf shapes on a dark forest background"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP1FRqQENqmS8H0JCpcTn_j2djNkmLobYCnNoXYLcQapB9LkJihoh_rn0HCMvh53jFcXQ5K0mg2P874eerAYP1spvGFelYGzy2W1MMGxPAcWYIsoqPJghYi0hobxEiWHNjyS8KVcxHiI3TdPnmZshytdpNH_4kSzVTdIhulwirQ_wkToBgDKJzSCkGYZEB8ws72lEg4gh3Uh2pU6Dc34tSZO-V4wTvtypIn6hJR3rtNeY-MksT00rDtqi_o_Y2JtvXz6KUhWYCFQ"
-              />
-            </div>
+        <section className="w-full md:w-1/2 hidden md:flex items-center justify-center bg-[#2d5a27] p-12">
+          <div className="text-center max-w-lg text-white">
+            <h1 className="font-headline text-4xl font-extrabold text-[#9dd090] mb-4">Verifikasi Kode</h1>
+            <p className="opacity-80">Masukkan kode 6 digit yang kami kirimkan ke email Anda.</p>
           </div>
-
-          {/* Absolute Decorative elements */}
-          <div className="absolute bottom-[-10%] right-[-10%] w-64 h-64 bg-[#006e1c] rounded-full blur-[100px] opacity-30"></div>
-          <div className="absolute top-[-10%] left-[-10%] w-80 h-80 bg-[#154212] rounded-full blur-[120px] opacity-20"></div>
         </section>
 
-        {/* Right Section: Verification Form */}
-        <section className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-[#f9f9f9]">
+        <section className="w-full md:w-1/2 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
-            {/* Branding Anchor */}
-            <div className="mb-12 flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#2d5a27] rounded-lg flex items-center justify-center">
-                <span className="material-symbols-outlined text-white text-2xl">
-                  recycling
-                </span>
-              </div>
-              <span className="font-headline font-black text-2xl text-[#154212] tracking-tighter">
-                TrashID
-              </span>
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold">Masukkan Kode OTP</h2>
+              <p className="text-sm text-zinc-600">Kode dikirim ke: <strong>{email}</strong></p>
             </div>
 
-            <div className="mb-10">
-              <h2 className="font-headline font-extrabold text-3xl text-[#1a1c1c] tracking-tight mb-3">
-                Verifikasi Akun
-              </h2>
-              <p className="text-[#42493e] leading-relaxed">
-                Kami telah mengirimkan kode verifikasi 6 digit ke email dan
-                nomor telepon terdaftar Anda.
-              </p>
-            </div>
-
-            {/* OTP Form */}
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-              <div className="flex justify-between gap-2 md:gap-3">
-                {[...Array(6)].map((_, i) => (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex justify-between gap-2">
+                {digits.map((d, i) => (
                   <input
                     key={i}
-                    className="otp-input w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-bold rounded-md bg-[#f3f3f3] border-none focus:ring-2 focus:ring-[#154212] transition-all duration-200 text-[#154212]"
+                    ref={(el) => (inputsRef.current[i] = el)}
+                    value={d}
+                    onChange={(e) => handleChange(i, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, i)}
+                    className="w-12 h-14 text-center text-2xl rounded-md bg-[#f3f3f3]"
                     maxLength={1}
-                    placeholder="·"
-                    type="text"
+                    inputMode="numeric"
                   />
                 ))}
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[#42493e] font-medium text-sm">
-                  <span className="material-symbols-outlined text-lg">
-                    timer
-                  </span>
-                  <span>00:30</span>
-                </div>
-                <button
-                  className="text-[#154212] font-semibold text-sm hover:underline underline-offset-4 transition-all opacity-50 cursor-not-allowed"
-                  type="button"
-                >
-                  Kirim ulang kode
-                </button>
-              </div>
+              {error && <div className="text-red-600">{error}</div>}
 
-              <button className="w-full py-4 bg-[#154212] text-white rounded-md font-bold text-lg hover:shadow-xl hover:shadow-[#154212]/10 active:scale-95 transition-all duration-200">
-                Verifikasi
+              <button type="submit" disabled={loading} className="w-full py-3 bg-[#154212] text-white rounded-md">
+                {loading ? "Memverifikasi..." : "Verifikasi"}
               </button>
             </form>
 
-            <div className="mt-12 pt-12 border-t border-[#c2c9bb]/15 flex flex-col gap-4">
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-white">
-                <div className="p-2 bg-[#d1e4ff] rounded-lg">
-                  <span className="material-symbols-outlined text-[#001d36]">
-                    info
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1a1c1c]">
-                    Butuh bantuan?
-                  </p>
-                  <p className="text-xs text-[#42493e]">
-                    Pastikan Anda memeriksa folder spam jika kode tidak kunjung
-                    sampai.
-                  </p>
-                </div>
-              </div>
-
-              <Link
-                className="inline-flex items-center gap-2 text-[#42493e] hover:text-[#154212] transition-colors text-sm font-medium group"
-                href="/login"
-              >
-                <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">
-                  arrow_back
-                </span>
-                Kembali ke halaman masuk
-              </Link>
+            <div className="mt-6 text-sm">
+              <Link href="/login" className="text-zinc-600 hover:text-[#154212]">Kembali ke login</Link>
             </div>
           </div>
         </section>

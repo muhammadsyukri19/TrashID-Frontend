@@ -1,9 +1,68 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
+
+  // State untuk form input
+  const [formData, setFormData] = useState({
+    fullName: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  // State untuk response/loading
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  // Handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Hit API backend untuk register
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Gagal mendaftar");
+      }
+
+      // Jika sukses
+      setSuccessMsg(
+        "Registrasi berhasil! Silakan periksa email/OTP (atau langsung login).",
+      );
+
+      // Bawa user ke halaman OTP (jika ada alurnya) ATAU ke /login
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    } catch (err: any) {
+      setErrorMsg(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <style
@@ -97,9 +156,21 @@ export default function RegisterPage() {
                 <p className="text-[#42493e] font-medium">
                   Lengkapi detail Anda untuk bergabung.
                 </p>
+
+                {/* Menampilkan pesan Error atau Success */}
+                {errorMsg && (
+                  <div className="mt-4 p-3 bg-red-100 text-red-700 text-sm font-bold rounded">
+                    {errorMsg}
+                  </div>
+                )}
+                {successMsg && (
+                  <div className="mt-4 p-3 bg-green-100 text-[#154212] text-sm font-bold rounded">
+                    {successMsg}
+                  </div>
+                )}
               </div>
 
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-6" onSubmit={handleRegister}>
                 {/* Full Name */}
                 <div className="space-y-2">
                   <label
@@ -115,6 +186,9 @@ export default function RegisterPage() {
                     <input
                       className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
                       id="full_name"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
                       placeholder="John Doe"
                       type="text"
                     />
@@ -135,6 +209,9 @@ export default function RegisterPage() {
                     <input
                       className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
                       id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
                       placeholder="johndoe24"
                       type="text"
                     />
@@ -155,6 +232,9 @@ export default function RegisterPage() {
                     <input
                       className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
                       id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       placeholder="name@example.com"
                       type="email"
                     />
@@ -175,6 +255,9 @@ export default function RegisterPage() {
                     <input
                       className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
                       id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
                       placeholder="••••••••"
                       type="password"
                     />
@@ -205,10 +288,11 @@ export default function RegisterPage() {
 
                 {/* Submit Button */}
                 <button
-                  className="w-full bg-[#154212] text-white py-4 rounded-md font-bold text-lg hover:bg-[#2d5a27] transition-all active:scale-95 shadow-lg shadow-[#154212]/10"
+                  className="w-full bg-[#154212] text-white py-4 rounded-md font-bold text-lg hover:bg-[#2d5a27] transition-all active:scale-95 shadow-lg shadow-[#154212]/10 disabled:opacity-75 disabled:cursor-not-allowed"
                   type="submit"
+                  disabled={loading}
                 >
-                  Daftar
+                  {loading ? "Memproses..." : "Daftar"}
                 </button>
               </form>
 
