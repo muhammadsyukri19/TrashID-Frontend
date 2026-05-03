@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     if (!password || password.length < 6) {
@@ -51,8 +51,8 @@ export default function ResetPasswordPage() {
       // clear stored otp
       if (typeof window !== "undefined") sessionStorage.removeItem("resetOtp");
       setTimeout(() => router.push("/login"), 1200);
-    } catch (err) {
-      setError(err.message || "Terjadi kesalahan");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
     } finally {
       setLoading(false);
     }
