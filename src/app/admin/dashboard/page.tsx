@@ -218,30 +218,6 @@ export default function AdminDashboardPage() {
               Execute Route
             </button>
           </div>
-
-          <div className="rounded-xl border border-[#e4e4de] bg-white p-6 shadow-[0_10px_28px_rgba(0,0,0,0.04)]">
-            <p className="text-center text-[10px] font-bold uppercase tracking-[0.24em] text-zinc-400">Waste Breakdown</p>
-            <div className="mt-6 flex items-center justify-center">
-              <div className="flex h-36 w-36 items-center justify-center rounded-full border-[10px] border-[#e6eee3] bg-white">
-                <div className="text-center">
-                  <div className="text-2xl font-extrabold text-[#154212]">64%</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Allocated</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              {wasteBreakdown.map((item) => (
-                <div key={item.name} className="flex items-center justify-between gap-3 text-sm">
-                  <div className="flex items-center gap-2 text-zinc-600">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span>{item.name}</span>
-                  </div>
-                  <span className="font-semibold text-[#1a1c1c]">{item.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
