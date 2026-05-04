@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export default function AdminLayout({
@@ -5,6 +9,27 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Mengecek apakah token ada
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    // Opsional: Cek juga apakah user memang admin
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.role !== "admin") {
+        router.push("/dashboard");
+      }
+    } catch (e) {
+      router.push("/login");
+    }
+  }, [router]);
+
   return (
     <div className="bg-[#f9f9f9] min-h-screen text-[#1a1c1c] font-body flex selection:bg-[#91f78e]">
       <style
