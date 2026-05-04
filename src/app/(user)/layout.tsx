@@ -1,12 +1,26 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
 import UserProfileButton from "@/components/UserProfileButton";
+import { useRouter } from "next/navigation";
 
 export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Mengecek apakah token ada di localStorage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Jika tidak ada token, paksa arahkan ke halaman login
+      router.push("/login");
+    }
+  }, [router]);
+
   return (
     <div className="bg-[#f9f9f9] min-h-screen text-[#1a1c1c] font-body flex selection:bg-[#91f78e] relative">
       {/*
