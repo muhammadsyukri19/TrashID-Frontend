@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export type Role = "admin" | "user";
 
@@ -37,17 +38,9 @@ const menuConfig: Record<Role, MenuItem[]> = {
 
 interface SidebarProps {
   role: Role;
-  userName?: string;
-  userType?: string;
-  avatarUrl?: string;
 }
 
-export default function Sidebar({
-  role,
-  userName = "Pengguna",
-  userType = "Member Umum",
-  avatarUrl = "https://ui-avatars.com/api/?name=User&background=154212&color=fff",
-}: SidebarProps) {
+export default function Sidebar({ role }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const menus = menuConfig[role];
@@ -79,21 +72,21 @@ export default function Sidebar({
         }`}
       >
         <div>
-          {/* Brand Identity */}
-          <div className="px-6 py-8 flex items-center gap-3 text-2xl font-black text-[#154212] font-headline">
-            <span
-              className="material-symbols-outlined text-3xl"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              eco
-            </span>
+          {/* Brand Identity with Logo */}
+          <div className="px-8 py-8 flex items-center gap-2 text-3xl font-black text-[#154212] font-headline">
+            {/* Ganti dengan logo Anda */}
+            <Image
+              src="/logo.png" // Ganti dengan path logo Anda
+              alt="Logo TrashID"
+              width={50}
+              height={50}
+            />
             <span>TrashID</span>
           </div>
 
           {/* Navigation Links */}
           <nav className="mt-4 flex flex-col gap-1">
             {menus.map((menu, index) => {
-              // Exact match, or starts with (for nested routes) but avoid base dashboard overriding children
               const isBaseRoute =
                 menu.href === "/dashboard" || menu.href === "/admin/dashboard";
               const isActive = isBaseRoute
@@ -127,23 +120,8 @@ export default function Sidebar({
           </nav>
         </div>
 
-        {/* User Profile / Footer Section */}
+        {/* Footer Section (Removed Profile Section) */}
         <div className="px-4">
-          <div className="flex items-center gap-3 p-4 bg-[#f3f3f3] rounded-xl mb-4 border border-[#e2e2e2]/50">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full object-cover shadow-sm bg-white"
-              src={avatarUrl}
-            />
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold text-[#1a1c1c] truncate">
-                {userName}
-              </p>
-              <p className="text-xs text-[#72796e] truncate">{userType}</p>
-            </div>
-          </div>
-
           <button className="w-full flex items-center gap-4 text-[#ba1a1a] px-4 py-3 font-['Manrope'] text-sm font-semibold hover:bg-red-50 transition-all duration-300 rounded-full group">
             <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">
               logout
