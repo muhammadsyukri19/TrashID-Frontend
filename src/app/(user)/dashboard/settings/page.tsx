@@ -1,116 +1,189 @@
-"use client"; // Menandakan ini adalah Client Component
+"use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-export default function SetelanPage() {
-  const settings = [
-    { icon: "person", title: "Profil", description: "Atur informasi dan foto profil" },
-    { icon: "notifications", title: "Notifikasi", description: "Kelola preferensi notifikasi" },
-    { icon: "lock", title: "Privacy", description: "Pengaturan keamanan & data pribadi" },
-    { icon: "help", title: "Bantuan", description: "Bantuan dan informasi aplikasi" },
-  ];
+export default function UserSettingsPage() {
+  const [profile, setProfile] = useState<any>({
+    fullName: "",
+    username: "",
+    email: "",
+    profilePicture: "",
+  });
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5001/api/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error("Failed to load profile", err);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage(null);
+
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("fullName", profile.fullName);
+      formData.append("username", profile.username);
+      formData.append("email", profile.email);
+      if (password) {
+        formData.append("password", password);
+      }
+      if (file) {
+        formData.append("profilePicture", file);
+      }
+
+      const res = await fetch("http://localhost:5001/api/users/profile", {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
+        setProfile((prev: any) => ({ ...prev, profilePicture: data.profilePicture }));
+        setPassword("");
+        setFile(null);
+      } else {
+        setMessage({ type: "error", text: data.message || "Gagal memperbarui profil" });
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Terjadi kesalahan pada server" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const displayImage = preview || (profile.profilePicture 
+    ? (profile.profilePicture.startsWith('http') ? profile.profilePicture : `http://localhost:5001${profile.profilePicture}`)
+    : "https://ui-avatars.com/api/?name=" + (profile.fullName || "User") + "&background=154212&color=fff");
 
   return (
-    <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,0,24&display=swap');
+    <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto space-y-8 font-body animate-fade-in">
+      <section>
+        <h1 className="font-headline text-3xl font-extrabold tracking-tight text-[#154212]">
+          Pengaturan Profil
+        </h1>
+        <p className="mt-2 text-sm text-zinc-500">
+          Kelola informasi pribadi, ganti kata sandi, dan perbarui foto profil Anda.
+        </p>
+      </section>
 
-          .font-headline, .font-display { font-family: 'Manrope', sans-serif; }
-          .font-body { font-family: 'Inter', sans-serif; }
-
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          }
-
-          .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: #fff;
-            border: 1px solid #e2e2e2;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            cursor: pointer;
-          }
-
-          .setting-item:hover {
-            background-color: #f3f3f3;
-          }
-
-          .setting-item .icon {
-            font-size: 28px;
-            color: #154212;
-          }
-
-          .setting-item .text {
-            flex-grow: 1;
-            padding-left: 15px;
-          }
-
-          .setting-item .text h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #154212;
-          }
-
-          .setting-item .text p {
-            font-size: 14px;
-            color: #42493e;
-          }
-
-          .setting-item .arrow {
-            font-size: 18px;
-            color: #154212;
-          }
-
-          .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-          }
-
-          .container h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #154212;
-            margin-bottom: 20px;
-          }
-
-          .container p {
-            font-size: 16px;
-            color: #42493e;
-            margin-bottom: 30px;
-          }
-        `,
-      }}
-      />
-
-      <main className="p-8 lg:p-12 w-full max-w-[1000px] mx-auto bg-[#f9f9f9] min-h-screen">
-        <div className="container">
-          <h2 className="font-display">Setelan</h2>
-          <p className="font-body">Lorem ipsum</p>
-
-          {/* Setting List */}
-          {settings.map((setting, index) => (
-            <div key={index} className="setting-item">
-              <span className="material-symbols-outlined icon">{setting.icon}</span>
-              <div className="text">
-                <h3>{setting.title}</h3>
-                <p>{setting.description}</p>
-              </div>
-              <span className="material-symbols-outlined arrow">chevron_right</span>
-            </div>
-          ))}
+      {message && (
+        <div className={`p-4 rounded-xl font-medium ${message.type === 'success' ? 'bg-[#ebf5e9] text-[#154212] border border-[#a1d494]' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          {message.text}
         </div>
-      </main>
-    </>
+      )}
+
+      <form onSubmit={handleUpdate} className="bg-white rounded-2xl shadow-sm border border-[#e4e4de] p-8">
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <img 
+              src={displayImage} 
+              alt="Profile" 
+              className="w-32 h-32 rounded-full object-cover border-4 border-[#f0f7ef] shadow-md transition-transform group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+            </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept="image/*" 
+              className="hidden" 
+            />
+          </div>
+          <p className="text-sm font-semibold text-[#154212] mt-4">Ubah Foto Profil</p>
+        </div>
+
+        <div className="space-y-5">
+          <div>
+            <label className="block text-sm font-bold text-[#1a1c1c] mb-2">Nama Lengkap</label>
+            <input 
+              type="text" 
+              value={profile.fullName || ""} 
+              onChange={(e) => setProfile({...profile, fullName: e.target.value})}
+              className="w-full px-4 py-3 bg-[#f9f9f9] border border-gray-200 rounded-xl focus:border-[#154212] focus:bg-white outline-none transition-colors"
+              required 
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-bold text-[#1a1c1c] mb-2">Username</label>
+              <input 
+                type="text" 
+                value={profile.username || ""} 
+                onChange={(e) => setProfile({...profile, username: e.target.value})}
+                className="w-full px-4 py-3 bg-[#f9f9f9] border border-gray-200 rounded-xl focus:border-[#154212] focus:bg-white outline-none transition-colors"
+                required 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-[#1a1c1c] mb-2">Email</label>
+              <input 
+                type="email" 
+                value={profile.email || ""} 
+                onChange={(e) => setProfile({...profile, email: e.target.value})}
+                className="w-full px-4 py-3 bg-[#f9f9f9] border border-gray-200 rounded-xl focus:border-[#154212] focus:bg-white outline-none transition-colors"
+                required 
+              />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-100">
+            <label className="block text-sm font-bold text-[#1a1c1c] mb-2">Ganti Kata Sandi (Opsional)</label>
+            <input 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Biarkan kosong jika tidak ingin mengubah sandi"
+              className="w-full px-4 py-3 bg-[#f9f9f9] border border-gray-200 rounded-xl focus:border-[#154212] focus:bg-white outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        <div className="mt-10 flex justify-end">
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            className="px-8 py-3 bg-[#154212] hover:bg-[#2d5a27] text-white rounded-xl font-bold shadow-lg shadow-[#154212]/20 disabled:opacity-70 transition-all flex items-center gap-2"
+          >
+            {isLoading ? "Menyimpan..." : "Simpan Perubahan"}
+            {!isLoading && <span className="material-symbols-outlined text-sm">save</span>}
+          </button>
+        </div>
+      </form>
+    </main>
   );
 }

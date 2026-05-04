@@ -63,11 +63,11 @@ export default function LocationPickerMap({ onConfirm, onCancel }: LocationPicke
   const [position, setPosition] = useState<L.LatLng | null>(null);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-[#f9f9f9]">
           <div>
-            <h3 className="font-bold text-lg text-[#154212]">Pilih Lokasi TPU</h3>
+            <h3 className="font-bold text-lg text-[#154212]">Pilih Lokasi TPS</h3>
             <p className="text-xs text-gray-500">Geser atau klik peta untuk menentukan titik akurat lokasi laporan Anda.</p>
           </div>
           <button onClick={onCancel} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500">

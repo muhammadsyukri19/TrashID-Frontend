@@ -1,7 +1,60 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login gagal");
+      }
+
+      // Simpan token & info user
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("user", JSON.stringify(data.data.user));
+
+      // REDIRECT BERDASARKAN ROLE
+      if (data.data.user.role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("Terjadi kesalahan yang tidak diketahui");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       {/* 
@@ -101,23 +154,34 @@ export default function LoginPage() {
                 <p className="text-[#42493e] font-medium">
                   Kelola kontribusi lingkungan Anda hari ini.
                 </p>
+
+                {/* Error Message Display */}
+                {errorMsg && (
+                  <div className="mt-4 p-3 bg-red-100 text-red-700 text-sm font-bold rounded-lg border border-red-200">
+                    {errorMsg}
+                  </div>
+                )}
               </div>
 
               {/* Form */}
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleLogin}>
                 <div className="space-y-2">
                   <label
                     className="text-sm font-semibold text-[#42493e] block ml-1"
                     htmlFor="email"
                   >
-                    Username atau Email
+                    Email
                   </label>
                   <div className="relative">
                     <input
                       className="w-full px-5 py-4 bg-[#f3f3f3] border-none rounded-md text-[#1a1c1c] placeholder:text-[#42493e]/40 transition-all font-medium"
                       id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       placeholder="nama@email.com"
-                      type="text"
+                      type="email"
+                      required
                     />
                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#42493e]/60">
                       alternate_email
@@ -136,8 +200,12 @@ export default function LoginPage() {
                     <input
                       className="w-full px-5 py-4 bg-[#f3f3f3] border-none rounded-md text-[#1a1c1c] placeholder:text-[#42493e]/40 transition-all font-medium"
                       id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
                       placeholder="••••••••"
                       type="password"
+                      required
                     />
                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#42493e]/60 cursor-pointer">
                       visibility_off
@@ -169,10 +237,11 @@ export default function LoginPage() {
 
                 <div className="space-y-4 pt-2">
                   <button
-                    className="w-full bg-[#154212] text-white font-bold py-4 rounded-md shadow-lg shadow-[#154212]/10 hover:shadow-[#154212]/20 hover:bg-[#2d5a27] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="w-full bg-[#154212] text-white font-bold py-4 rounded-md shadow-lg shadow-[#154212]/10 hover:shadow-[#154212]/20 hover:bg-[#2d5a27] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     type="submit"
+                    disabled={loading}
                   >
-                    <span>Masuk</span>
+                    <span>{loading ? "Memproses..." : "Masuk"}</span>
                     <span className="material-symbols-outlined text-xl">
                       login
                     </span>

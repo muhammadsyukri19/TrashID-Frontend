@@ -168,10 +168,10 @@ export default function LaporTPUPage() {
         {/* Header */}
         <header className="mb-10">
           <h2 className="text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
-            Laporkan Kondisi TPU
+            Lapor Kondisi TPS
           </h2>
           <p className="text-[#42493e] font-medium text-lg">
-            Ambil atau unggah foto kondisi TPU untuk dilaporkan.
+            Bantu kami memantau titik sampah secara real-time.
           </p>
         </header>
 
@@ -210,7 +210,7 @@ export default function LaporTPUPage() {
                   </div>
 
                   <h3 className="font-headline text-xl font-bold text-[#154212] text-center mb-2">
-                    Klik untuk Ambil atau Unggah Lokasi TPU
+                    Klik untuk Ambil atau Unggah Lokasi TPS
                   </h3>
                   <p className="text-sm text-[#72796e] mb-8 font-medium">
                     dengan format .jpg atau .jpeg

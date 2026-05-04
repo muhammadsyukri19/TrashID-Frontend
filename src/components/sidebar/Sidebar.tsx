@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import LogoutModal from "../LogoutModal";
+import { useRouter } from "next/navigation";
 
 export type Role = "admin" | "user";
 
@@ -19,18 +21,18 @@ const menuConfig: Record<Role, MenuItem[]> = {
     { title: "Dashboard", icon: "dashboard", href: "/admin/dashboard" },
     { title: "Kelola Laporan", icon: "assignment", href: "/admin/reports" },
     { title: "Verifikasi AI", icon: "psychology", href: "/admin/ai-verify" },
-    { title: "Data TPU", icon: "map", href: "/admin/tpu" },
+    { title: "Data TPS", icon: "map", href: "/admin/tpu" },
     { title: "Manajemen Pengguna", icon: "group", href: "/admin/users" },
     { title: "Pengaturan", icon: "settings", href: "/admin/settings" },
   ],
   user: [
     { title: "Beranda", icon: "home", href: "/dashboard" },
     {
-      title: "Lapor Kondisi TPU",
+      title: "Lapor Kondisi TPS",
       icon: "report_problem",
       href: "/dashboard/lapor",
     },
-    { title: "Peta TPU", icon: "map", href: "/dashboard/peta" },
+    { title: "Peta TPS", icon: "map", href: "/dashboard/peta" },
     { title: "Scan AI", icon: "center_focus_strong", href: "/dashboard/scan" },
     { title: "Setelan", icon: "settings", href: "/dashboard/settings" },
   ],
@@ -42,8 +44,16 @@ interface SidebarProps {
 
 export default function Sidebar({ role }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const menus = menuConfig[role];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
   return (
     <>
@@ -122,7 +132,10 @@ export default function Sidebar({ role }: SidebarProps) {
 
         {/* Footer Section (Removed Profile Section) */}
         <div className="px-4">
-          <button className="w-full flex items-center gap-4 text-[#ba1a1a] px-4 py-3 font-['Manrope'] text-sm font-semibold hover:bg-red-50 transition-all duration-300 rounded-full group">
+          <button 
+            onClick={() => setShowLogoutModal(true)}
+            className="w-full flex items-center gap-4 text-[#ba1a1a] px-4 py-3 font-['Manrope'] text-sm font-semibold hover:bg-red-50 transition-all duration-300 rounded-full group"
+          >
             <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">
               logout
             </span>
@@ -130,6 +143,13 @@ export default function Sidebar({ role }: SidebarProps) {
           </button>
         </div>
       </aside>
+
+      {/* Logout Modal */}
+      <LogoutModal 
+        isOpen={showLogoutModal} 
+        onConfirm={handleLogout} 
+        onCancel={() => setShowLogoutModal(false)} 
+      />
     </>
   );
 }

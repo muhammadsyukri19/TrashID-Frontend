@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import LogoutModal from "../LogoutModal";
 
 type MenuItem = {
   title: string;
@@ -12,17 +13,27 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { title: "Beranda", icon: "dashboard", href: "/admin/dashboard" },
-  { title: "Manajemen Laporan", icon: "assignment", href: "/admin/reports" },
-  { title: "Kelola TPU", icon: "map", href: "/admin/tpu" },
-  { title: "Setelan", icon: "settings", href: "/admin/settings" },
+  { title: "Kelola Laporan", icon: "assignment", href: "/admin/reports" },
+  { title: "Data TPS", icon: "map", href: "/admin/tpu" },
+  { title: "Manajemen Pengguna", icon: "group", href: "/admin/users" },
+  { title: "Pengaturan", icon: "settings", href: "/admin/settings" },
 ];
 
 export default function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
   return (
     <>
+      {/* Mobile Toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 left-4 z-[60] p-2 bg-white rounded-md shadow-md text-[#154212] flex items-center justify-center lg:hidden"
@@ -32,6 +43,7 @@ export default function AdminSidebar() {
         </span>
       </button>
 
+      {/* Overlay */}
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity"
@@ -89,20 +101,23 @@ export default function AdminSidebar() {
         </div>
 
         <div className="px-4">
+          {/* Admin Profile Card */}
           <div className="flex items-center gap-3 p-4 bg-[#f3f3f3] rounded-xl mb-4 border border-[#e2e2e2]/50">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt="User Avatar"
               className="w-10 h-10 rounded-full object-cover shadow-sm bg-white"
               src="https://ui-avatars.com/api/?name=Admin&background=154212&color=fff"
             />
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-[#1a1c1c] truncate">Admin</p>
+              <p className="text-sm font-bold text-[#1a1c1c] truncate">Admin System</p>
               <p className="text-xs text-[#72796e] truncate">Administrator</p>
             </div>
           </div>
 
-          <button className="w-full flex items-center gap-4 text-[#ba1a1a] px-4 py-3 font-['Manrope'] text-sm font-semibold hover:bg-red-50 transition-all duration-300 rounded-full group">
+          <button 
+            onClick={() => setShowLogoutModal(true)}
+            className="w-full flex items-center gap-4 text-[#ba1a1a] px-4 py-3 font-['Manrope'] text-sm font-semibold hover:bg-red-50 transition-all duration-300 rounded-full group"
+          >
             <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">
               logout
             </span>
@@ -110,6 +125,12 @@ export default function AdminSidebar() {
           </button>
         </div>
       </aside>
+
+      <LogoutModal 
+        isOpen={showLogoutModal} 
+        onConfirm={handleLogout} 
+        onCancel={() => setShowLogoutModal(false)} 
+      />
     </>
   );
 }

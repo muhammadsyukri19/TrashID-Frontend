@@ -28,9 +28,16 @@ function StatusBadge({ tone, children }: { tone: string; children: React.ReactNo
   );
 }
 
+const LocationPickerMap = dynamic(() => import("../../../components/LocationPickerMap"), { ssr: false });
+
 export default function AdminTpuPage() {
   const [tpsList, setTpsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ nama_tps: "", deskripsi: "" });
+  const [selectedCoords, setSelectedCoords] = useState<{lat: number, lng: number} | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  
   const [stats, setStats] = useState([
     { label: "Total Fasilitas", value: "0", icon: "location_city", tone: "green" },
     { label: "Penuh", value: "0", icon: "error", tone: "red" },
@@ -38,35 +45,69 @@ export default function AdminTpuPage() {
     { label: "Kosong", value: "0", icon: "check_circle", tone: "emerald" },
   ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:5001/api/tps");
-        const json = await response.json();
-        if (json.status === "success") {
-          setTpsList(json.data);
-          
-          // Update stats dynamically
-          const total = json.data.length;
-          const penuh = json.data.filter((t: any) => t.status_terkini === "penuh").length;
-          const sedang = json.data.filter((t: any) => t.status_terkini === "sedang").length;
-          const kosong = json.data.filter((t: any) => t.status_terkini === "kosong").length;
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:5001/api/tps");
+      const json = await response.json();
+      if (json.status === "success") {
+        setTpsList(json.data);
+        
+        // Update stats dynamically
+        const total = json.data.length;
+        const penuh = json.data.filter((t: any) => t.status_terkini === "penuh").length;
+        const sedang = json.data.filter((t: any) => t.status_terkini === "sedang").length;
+        const kosong = json.data.filter((t: any) => t.status_terkini === "kosong").length;
 
-          setStats([
-            { label: "Total Fasilitas", value: total.toString(), icon: "location_city", tone: "green" },
-            { label: "Penuh", value: penuh.toString(), icon: "error", tone: "red" },
-            { label: "Sedang", value: sedang.toString(), icon: "warning", tone: "amber" },
-            { label: "Kosong", value: kosong.toString(), icon: "check_circle", tone: "emerald" },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error fetching admin tps data:", error);
-      } finally {
-        setLoading(false);
+        setStats([
+          { label: "Total Fasilitas", value: total.toString(), icon: "location_city", tone: "green" },
+          { label: "Penuh", value: penuh.toString(), icon: "error", tone: "red" },
+          { label: "Sedang", value: sedang.toString(), icon: "warning", tone: "amber" },
+          { label: "Kosong", value: kosong.toString(), icon: "check_circle", tone: "emerald" },
+        ]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching admin tps data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
+
+  const handleCreateTps = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCoords) {
+      alert("Pilih lokasi di peta terlebih dahulu");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5001/api/tps", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...formData,
+          lat: selectedCoords.lat,
+          lng: selectedCoords.lng
+        })
+      });
+
+      if (res.ok) {
+        setIsModalOpen(false);
+        setFormData({ nama_tps: "", deskripsi: "" });
+        setSelectedCoords(null);
+        fetchData();
+      }
+    } catch (err) {
+      console.error("Failed to create TPS", err);
+    }
+  };
 
   const mapMarkers = tpsList.map((tps: any) => ({
     lat: tps.location?.coordinates[1],
@@ -89,10 +130,10 @@ export default function AdminTpuPage() {
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="font-headline text-3xl font-extrabold tracking-tight text-[#154212]">
-            Kelola TPU
+            Kelola TPS
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-            Pantau kapasitas TPS/TPA, status operasional, dan kondisi fasilitas dalam satu halaman yang rapi.
+            Pantau kapasitas TPS, status operasional, dan kondisi fasilitas dalam satu halaman yang rapi.
           </p>
         </div>
 
@@ -140,9 +181,12 @@ export default function AdminTpuPage() {
             <h2 className="font-headline text-lg font-bold text-[#154212]">Daftar TPS/TPA (Database)</h2>
             <p className="mt-1 text-sm text-zinc-500">List fasilitas yang terdaftar di database sistem.</p>
           </div>
-          <button className="bg-[#154212] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#23581e] transition-colors flex items-center gap-2">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#154212] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#23581e] transition-colors flex items-center gap-2"
+          >
             <span className="material-symbols-outlined text-sm">add</span>
-            Tambah TPU Baru
+            Tambah TPS Baru
           </button>
         </div>
 
@@ -201,6 +245,82 @@ export default function AdminTpuPage() {
           )}
         </div>
       </section>
+
+      {/* MODAL TAMBAH TPU */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-[#1a1c1c] mb-6">Tambah Fasilitas TPS Baru</h3>
+            <form onSubmit={handleCreateTps} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-zinc-700 mb-1">Nama TPU</label>
+                <input 
+                  type="text" 
+                  value={formData.nama_tps}
+                  onChange={e => setFormData({...formData, nama_tps: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#154212]"
+                  placeholder="Contoh: TPU Jambaro"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-zinc-700 mb-1">Deskripsi / Alamat</label>
+                <textarea 
+                  value={formData.deskripsi}
+                  onChange={e => setFormData({...formData, deskripsi: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#154212] min-h-[100px]"
+                  placeholder="Alamat lengkap atau deskripsi lokasi"
+                />
+              </div>
+              
+              <div className="pt-2">
+                <label className="block text-sm font-bold text-zinc-700 mb-2">Lokasi Koordinat</label>
+                {selectedCoords ? (
+                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-100 rounded-xl">
+                    <span className="text-xs font-mono text-green-700">{selectedCoords.lat.toFixed(6)}, {selectedCoords.lng.toFixed(6)}</span>
+                    <button type="button" onClick={() => setShowPicker(true)} className="text-xs font-bold text-green-800 underline">Ubah</button>
+                  </div>
+                ) : (
+                  <button 
+                    type="button"
+                    onClick={() => setShowPicker(true)}
+                    className="w-full py-4 border-2 border-dashed border-gray-200 rounded-xl text-zinc-400 font-bold text-sm hover:bg-gray-50 transition-colors"
+                  >
+                    + Pilih Lokasi di Peta
+                  </button>
+                )}
+              </div>
+
+              <div className="flex gap-3 pt-6">
+                <button 
+                  type="button" 
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl font-bold text-white bg-[#154212] hover:bg-[#235d1f] transition-all"
+                >
+                  Simpan TPU
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MAP PICKER MODAL */}
+      {showPicker && (
+        <LocationPickerMap 
+          onConfirm={(lat, lng) => {
+            setSelectedCoords({ lat, lng });
+            setShowPicker(false);
+          }}
+          onCancel={() => setShowPicker(false)}
+        />
+      )}
     </div>
   );
 }
