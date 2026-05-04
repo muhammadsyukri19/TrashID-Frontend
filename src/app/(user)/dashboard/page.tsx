@@ -140,21 +140,20 @@ export default function UserDashboardPage() {
 
         {/* Quick Action Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          {/* Scan Sampah Card */}
-          <div className="relative overflow-hidden bg-white rounded-xl shadow-[0_20px_40px_rgba(21,66,18,0.06)] group p-8 flex flex-col justify-between h-64 border border-[#c2c9bb]/10">
+          <div className="relative overflow-hidden bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] group p-8 flex flex-col justify-between h-72 border border-zinc-100 hover:shadow-[0_20px_50px_rgba(21,66,18,0.1)] transition-all duration-500">
             <div className="relative z-10 max-w-[70%]">
-              <h3 className="font-headline text-2xl font-bold text-[#154212] mb-3">
+              <h3 className="font-headline text-2xl font-extrabold text-[#154212] mb-3">
                 Scan Sampah
               </h3>
-              <p className="text-sm text-zinc-500 mb-6 leading-relaxed">
-                Identifikasi jenis sampah Anda dengan AI untuk pemilahan yang lebih akurat.
+              <p className="text-sm text-zinc-500 mb-8 leading-relaxed font-medium">
+                Identifikasi jenis sampah Anda dengan AI untuk pemilahan yang lebih akurat dan reward XP.
               </p>
-              <Link href="/dashboard/scan" className="bg-[#154212] hover:bg-[#2d5a27] text-white w-max px-6 py-3 rounded-md transition-all flex items-center gap-2 group-hover:scale-105 active:scale-95 duration-300">
-                <span className="material-symbols-outlined text-sm">qr_code_scanner</span>
+              <Link href="/dashboard/scan" className="bg-[#154212] hover:bg-[#2d5a27] text-white w-max px-8 py-3.5 rounded-xl transition-all flex items-center gap-2 group-hover:scale-105 active:scale-95 duration-300 shadow-lg shadow-[#154212]/20">
+                <span className="material-symbols-outlined text-[20px]">qr_code_scanner</span>
                 <span className="font-headline text-sm font-bold">Mulai Scan</span>
               </Link>
             </div>
-            <div className="absolute -right-10 -bottom-10 w-64 h-64 opacity-20 group-hover:opacity-30 transition-opacity">
+            <div className="absolute -right-12 -bottom-12 w-64 h-64 opacity-10 group-hover:opacity-20 transition-all duration-700 group-hover:rotate-12 group-hover:scale-110">
               <img
                 alt="AI Scan Illustration"
                 className="w-full h-full object-contain"
@@ -164,20 +163,20 @@ export default function UserDashboardPage() {
           </div>
 
           {/* Laporkan TPU Card */}
-          <div className="relative overflow-hidden bg-[#154212] rounded-xl shadow-[0_20px_40px_rgba(21,66,18,0.15)] group p-8 flex flex-col justify-between h-64 border border-[#154212]">
-            <div className="relative z-10 max-w-[70%]">
-              <h3 className="font-headline text-2xl font-bold text-white mb-3">
+          <div className="relative overflow-hidden bg-gradient-to-br from-[#154212] to-[#214d20] rounded-2xl shadow-[0_20px_40px_rgba(21,66,18,0.15)] group p-8 flex flex-col justify-between h-72 border border-[#154212] hover:shadow-[0_25px_60px_rgba(21,66,18,0.25)] transition-all duration-500">
+            <div className="relative z-10 max-w-[70%] text-white">
+              <h3 className="font-headline text-2xl font-extrabold text-[#94f990] mb-3">
                 Laporkan Kondisi TPS
               </h3>
-              <p className="text-sm text-green-100 mb-6 leading-relaxed">
-                Bantu kami memantau titik pembuangan agar kebersihan lingkungan terjaga.
+              <p className="text-sm text-green-100/80 mb-8 leading-relaxed font-medium">
+                Bantu kami memantau titik pembuangan agar kebersihan lingkungan tetap terjaga bersama.
               </p>
-              <Link href="/dashboard/lapor" className="bg-[#bcf0ae] text-[#154212] w-max px-6 py-3 rounded-md transition-all flex items-center gap-2 hover:bg-white duration-300 hover:scale-105 active:scale-95">
-                <span className="material-symbols-outlined text-sm">add_location_alt</span>
+              <Link href="/dashboard/lapor" className="bg-[#bcf0ae] text-[#154212] w-max px-8 py-3.5 rounded-xl transition-all flex items-center gap-2 hover:bg-white duration-300 hover:scale-105 active:scale-95 shadow-lg shadow-black/20">
+                <span className="material-symbols-outlined text-[20px]">add_location_alt</span>
                 <span className="font-headline text-sm font-bold">Buat Laporan</span>
               </Link>
             </div>
-            <div className="absolute -right-8 -bottom-8 w-60 h-60 opacity-20 group-hover:opacity-30 transition-opacity">
+            <div className="absolute -right-8 -bottom-8 w-60 h-60 opacity-20 group-hover:opacity-30 transition-all duration-700 group-hover:-rotate-6 group-hover:scale-110">
               <img
                 alt="Map Illustration"
                 className="w-full h-full object-contain"
@@ -291,6 +290,52 @@ export default function UserDashboardPage() {
           </div>
         </section>
 
+        {/* Contextual Impact Meter - Beautiful Stats Section */}
+        <section className="mt-12 bg-gradient-to-br from-[#154212] to-[#2d5a27] text-white p-8 lg:p-12 rounded-3xl relative overflow-hidden shadow-2xl shadow-[#154212]/20 animate-fade-in">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-12">
+            <div className="max-w-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 mb-6 backdrop-blur-md">
+                <span className="material-symbols-outlined text-[14px] text-[#bcf0ae]">analytics</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#bcf0ae]">Kontribusi Lingkungan</span>
+              </div>
+              <h3 className="font-headline text-2xl font-bold mb-3">
+                Jejak Kebaikan Anda
+              </h3>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-6xl font-black tracking-tighter text-[#94f990]">
+                  {((profile?.xp || 0) * 0.5).toFixed(1)}
+                </span>
+                <span className="text-2xl font-bold opacity-70">KG</span>
+              </div>
+              <p className="text-sm mt-6 opacity-80 leading-relaxed font-medium">
+                Estimasi berat sampah yang berhasil Anda alihkan dari TPA melalui pemilahan dan pelaporan yang bertanggung jawab.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+              <div className="bg-white/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-center hover:bg-white/20 transition-colors">
+                <span className="block text-3xl font-black text-[#94f990] mb-1">{reports.length}</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">Laporan</span>
+              </div>
+              <div className="bg-white/10 backdrop-blur-xl p-6 rounded-2xl border border-white/10 text-center hover:bg-white/20 transition-colors">
+                <span className="block text-3xl font-black text-[#94f990] mb-1">{Math.floor((profile?.xp || 0) / 100)}</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">Lencana</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Decorative Elements */}
+          <div className="absolute -right-20 -top-20 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+          <div className="absolute -left-10 -bottom-10 w-60 h-60 bg-[#94f990]/10 rounded-full blur-3xl"></div>
+        </section>
+
+        {/* Floating Action Button (FAB) */}
+        <Link href="/dashboard/lapor" className="fixed bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-[#154212] to-[#2d5a27] text-white shadow-[0_20px_40px_rgba(21,66,18,0.3)] flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-50 group border-2 border-white/20">
+          <span className="material-symbols-outlined text-3xl">add</span>
+          <span className="absolute right-20 bg-[#154212] px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 pointer-events-none">
+            Lapor Sekarang
+          </span>
+        </Link>
       </main>
   );
 }
