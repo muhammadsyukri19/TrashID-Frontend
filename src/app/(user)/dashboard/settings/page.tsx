@@ -88,7 +88,7 @@ export default function UserSettingsPage() {
     : "https://ui-avatars.com/api/?name=" + (profile.fullName || "User") + "&background=154212&color=fff");
 
   return (
-    <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto space-y-8 font-body animate-fade-in">
+    <main className="p-8 lg:p-15 w-full max-w-[1400px] mx-auto space-y-8 font-body animate-fade-in">
       <section>
         <h1 className="font-headline text-3xl font-extrabold tracking-tight text-[#154212]">
           Pengaturan Profil

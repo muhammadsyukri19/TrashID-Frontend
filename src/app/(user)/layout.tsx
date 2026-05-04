@@ -15,13 +15,10 @@ export default function UserLayout({
       */}
       <Sidebar
         role="user"
-        userName="User Curator"
-        userType="Premium Tier"
-        avatarUrl="https://lh3.googleusercontent.com/aida/ADBb0ujX_HXUNEHS34qx9QFELl6qnlMsqwyw1gcVALDixFN66R7M9oEzlvWURa4R6h8N7YOGVXgrrePGx3v4YQGTEIB-VDORPj2zxCrBYlDlX9zZNW-RiEKnmM3v7S6413B2EM2kCgFxO_1hw7hnvzDl6WEXD5wUovWkEAujhpkSAHfiVZT6rDodKZALlzI45YDwiFxmfOIl3Doz5RA4h8rcoTHvUS1cRvPIf042nkmpy59NpnFbfbsRV84XbL8RWHdpsiIOruUaHIU"
-      />
+        />
 
       {/* Profile Button - Positioned absolutely in top right */}
-      <div className="absolute top-6 right-6 z-50">
+      <div className="absolute top-15 right-15 z-50">
         <UserProfileButton />
       </div>
 

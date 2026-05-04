@@ -25,37 +25,42 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
     if (onClick) {
       onClick();
     } else {
-      // Default action: redirect to profile page
-      window.location.href = "/dashboard/settings/profile"; // Ganti dengan path yang sesuai
+      window.location.href = "/dashboard/settings/profile";
     }
   };
 
-  // Tentukan gambar profil dengan fallback
   const displayImage = profile?.profilePicture
-    ? (profile.profilePicture.startsWith("http")
-        ? profile.profilePicture
-        : `http://localhost:5001${profile.profilePicture}`)
-    : "https://ui-avatars.com/api/?name=" + (profile?.fullName || "User") + "&background=154212&color=fff";
+    ? profile.profilePicture.startsWith("http")
+      ? profile.profilePicture
+      : `http://localhost:5001${profile.profilePicture}`
+    : "https://ui-avatars.com/api/?name=" +
+      (profile?.fullName || "User") +
+      "&background=154212&color=fff";
 
   return (
     <button
-      className="flex items-center gap-4 bg-[#ffffff] p-2 pr-6 rounded-full shadow-sm w-max"
       onClick={handleClick}
+      className="group inline-flex items-center gap-3 bg-white hover:bg-[#f4fef0] border border-zinc-200 hover:border-[#5ccf3c] rounded-full py-2 pl-2 pr-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] shadow-sm"
     >
-      <div className="w-10 h-10 rounded-full bg-[#bcf0ae] flex items-center justify-center text-[#154212] overflow-hidden">
-        {/* Gambar profil */}
+      {/* Avatar */}
+      <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#bcf0ae] flex-shrink-0">
         <img
           alt="Profile"
           className="w-full h-full object-cover"
           src={displayImage}
         />
       </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-bold text-[#1a1c1c]">
-          {profile?.username || "User"} {/* Nama pengguna atau fallback */}
+
+      {/* Info */}
+      <div className="flex flex-col gap-1">
+        <span className="text-[13px] font-bold text-[#154212] leading-tight tracking-wide">
+          {profile?.username || "User"}
         </span>
-        <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
-          {profile?.xp ? `${profile.xp} XP` : "0 XP"} {/* XP pengguna atau fallback */}
+
+        {/* XP Badge */}
+        <span className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-[#154212] bg-[#d4f5c4] rounded-full px-2.5 py-[3px] w-fit leading-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#5ccf3c] inline-block" />
+          {profile?.xp ? `${profile.xp} XP` : "0 XP"}
         </span>
       </div>
     </button>
