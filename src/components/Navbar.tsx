@@ -2,11 +2,9 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation'; // Import useRouter untuk navigasi
 
 export default function Navbar() {
   const [active, setActive] = useState("platform");
-  const router = useRouter(); // Inisialisasi router untuk navigasi
 
   const menu = [
     { id: "platform", label: "Platform" },
@@ -46,13 +44,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Menangani klik pada tombol Mulai yang mengarah ke halaman login
-  const handleMulaiClick = () => {
-    router.push('/login'); // Navigasi ke halaman login
-  };
-
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-gray-100 px-10 py-4 flex items-center justify-between shadow-sm">
+
       {/* Logo */}
       <div className="flex items-center gap-2">
         <Image src="/logo.png" alt="TrashID Logo" width={40} height={40} />
@@ -80,7 +74,7 @@ export default function Navbar() {
 
       {/* BUTTON */}
       <button
-        onClick={handleMulaiClick} // Ganti dengan handleMulaiClick untuk navigasi ke login
+        onClick={() => scrollToSection("uji")}
         className="bg-green-700 text-white px-6 py-2 rounded-md hover:bg-green-800 transition"
       >
         Mulai

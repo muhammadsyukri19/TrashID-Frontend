@@ -33,31 +33,15 @@ export default function RegisterPage() {
     setSuccessMsg("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Gagal mendaftar");
-      }
-
-      // Jika sukses
-      setSuccessMsg(
-        "Registrasi berhasil! Silakan periksa email/OTP (atau langsung login).",
-      );
-
-      // Bawa user ke halaman OTP (jika ada alurnya) ATAU ke /login
       setTimeout(() => {
         router.push("/login");
       }, 2000);
-    } catch (err: any) {
-      setErrorMsg(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("Terjadi kesalahan yang tidak diketahui");
+      }
     } finally {
       setLoading(false);
     }

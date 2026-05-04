@@ -11,13 +11,13 @@ export default function ForgotPasswordPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setMessage("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      const res = await fetch("http://localhost:5001/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -28,11 +28,17 @@ export default function ForgotPasswordPage() {
       // Navigate to verify page with reset mode
       router.push(`/verify-otp?mode=reset&email=${encodeURIComponent(email)}`);
     } catch (err) {
-      setError(err.message || "Error");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Terjadi kesalahan yang tidak diketahui");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  return (
     <>
       <style
         dangerouslySetInnerHTML={{
