@@ -100,11 +100,6 @@ export default function UserDashboardPage() {
       .catch(() => setLoadingTps(false));
   }, [router]);
 
-  // Display user avatar logic
-  const displayImage = profile?.profilePicture 
-    ? (profile.profilePicture.startsWith('http') ? profile.profilePicture : `http://localhost:5001${profile.profilePicture}`)
-    : "https://ui-avatars.com/api/?name=" + (profile?.fullName || "User") + "&background=154212&color=fff";
-
   return (
     <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto bg-[#f9f9f9]">
         {/* Header */}
@@ -118,23 +113,6 @@ export default function UserDashboardPage() {
                 Yuk mulai kontribusi kecil hari ini untuk lingkungan yang lebih bersih.
               </p>
             </div>
-            <Link href="/dashboard/settings" className="flex items-center gap-4 bg-[#ffffff] p-2 pr-6 rounded-full shadow-sm w-max hover:shadow-md transition-shadow">
-              <div className="w-10 h-10 rounded-full bg-[#bcf0ae] flex items-center justify-center text-[#154212] overflow-hidden border border-green-100">
-                <img
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  src={displayImage}
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-[#1a1c1c]">
-                  {profile?.username || "User"}
-                </span>
-                <span className="text-[10px] uppercase tracking-widest text-[#154212] font-bold">
-                  {profile?.xp || 0} XP
-                </span>
-              </div>
-            </Link>
           </header>
         )}
 

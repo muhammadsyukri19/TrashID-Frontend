@@ -1,20 +1,41 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface UserProfileButtonProps {
   onClick?: () => void;
 }
 
 export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch("http://localhost:5001/api/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => setProfile(data))
+        .catch((err) => console.error("Error fetching profile:", err));
+    }
+  }, []);
+
   const handleClick = () => {
     if (onClick) {
       onClick();
     } else {
       // Default action: redirect to profile page
-      window.location.href = "/settings/profile"; // Ganti dengan path yang sesuai
+      window.location.href = "/dashboard/settings/profile"; // Ganti dengan path yang sesuai
     }
   };
+
+  // Tentukan gambar profil dengan fallback
+  const displayImage = profile?.profilePicture
+    ? (profile.profilePicture.startsWith("http")
+        ? profile.profilePicture
+        : `http://localhost:5001${profile.profilePicture}`)
+    : "https://ui-avatars.com/api/?name=" + (profile?.fullName || "User") + "&background=154212&color=fff";
 
   return (
     <button
@@ -22,19 +43,19 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
       onClick={handleClick}
     >
       <div className="w-10 h-10 rounded-full bg-[#bcf0ae] flex items-center justify-center text-[#154212] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* Gambar profil */}
         <img
           alt="Profile"
           className="w-full h-full object-cover"
-          src="https://lh3.googleusercontent.com/aida/ADBb0ujX_HXUNEHS34qx9QFELl6qnlMsqwyw1gcVALDixFN66R7M9oEzlvWURa4R6h8N7YOGVXgrrePGx3v4YQGTEIB-VDORPj2zxCrBYlDlX9zZNW-RiEKnmM3v7S6413B2EM2kCgFxO_1hw7hnvzDl6WEXD5wUovWkEAujhpkSAHfiVZT6rDodKZALlzI45YDwiFxmfOIl3Doz5RA4h8rcoTHvUS1cRvPIf042nkmpy59NpnFbfbsRV84XbL8RWHdpsiIOruUaHIU"
+          src={displayImage}
         />
       </div>
       <div className="flex flex-col">
         <span className="text-sm font-bold text-[#1a1c1c]">
-          User Curator
+          {profile?.username || "User"} {/* Nama pengguna atau fallback */}
         </span>
         <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
-          Premium Tier
+          {profile?.xp ? `${profile.xp} XP` : "0 XP"} {/* XP pengguna atau fallback */}
         </span>
       </div>
     </button>
