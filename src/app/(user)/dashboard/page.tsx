@@ -23,7 +23,7 @@ export default function UserDashboardPage() {
       />
 
       <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto bg-[#f9f9f9]">
-        {/* Header */}
+        {/* Quick Action Cards (Bento Style) */}
         <header className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-12">
           <div>
             <h2 className="text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
@@ -34,27 +34,7 @@ export default function UserDashboardPage() {
               bersih.
             </p>
           </div>
-          <div className="flex items-center gap-4 bg-[#ffffff] p-2 pr-6 rounded-full shadow-sm w-max">
-            <div className="w-10 h-10 rounded-full bg-[#bcf0ae] flex items-center justify-center text-[#154212] overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="Profile"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida/ADBb0ujX_HXUNEHS34qx9QFELl6qnlMsqwyw1gcVALDixFN66R7M9oEzlvWURa4R6h8N7YOGVXgrrePGx3v4YQGTEIB-VDORPj2zxCrBYlDlX9zZNW-RiEKnmM3v7S6413B2EM2kCgFxO_1hw7hnvzDl6WEXD5wUovWkEAujhpkSAHfiVZT6rDodKZALlzI45YDwiFxmfOIl3Doz5RA4h8rcoTHvUS1cRvPIf042nkmpy59NpnFbfbsRV84XbL8RWHdpsiIOruUaHIU"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-[#1a1c1c]">
-                User Curator
-              </span>
-              <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">
-                Premium Tier
-              </span>
-            </div>
-          </div>
-        </header>
-
-        {/* Quick Action Cards (Bento Style) */}
+           </header>
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* Scan Sampah Card */}
           <div className="relative overflow-hidden bg-white rounded-xl shadow-[0_20px_40px_rgba(21,66,18,0.06)] group p-8 flex flex-col justify-between h-64 border border-[#c2c9bb]/10">

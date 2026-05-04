@@ -1,13 +1,14 @@
 "use client"; // Menandakan ini adalah Client Component
 
 import React from "react";
+import Link from "next/link"; // Import Link dari Next.js
 
 export default function SetelanPage() {
   const settings = [
-    { icon: "person", title: "Profil", description: "Atur informasi dan foto profil" },
-    { icon: "notifications", title: "Notifikasi", description: "Kelola preferensi notifikasi" },
-    { icon: "lock", title: "Privacy", description: "Pengaturan keamanan & data pribadi" },
-    { icon: "help", title: "Bantuan", description: "Bantuan dan informasi aplikasi" },
+    { icon: "person", title: "Profil", description: "Atur informasi dan foto profil", link: "/dashboard/settings/profile" },
+    { icon: "notifications", title: "Notifikasi", description: "Kelola preferensi notifikasi", link: "/dashboard/settings/notifications" },
+    { icon: "lock", title: "Privacy", description: "Pengaturan keamanan & data pribadi", link: "/dashboard/settings/privacy" },
+    { icon: "help", title: "Bantuan", description: "Bantuan dan informasi aplikasi", link: "/dashboard/settings/help" },
   ];
 
   return (
@@ -98,16 +99,18 @@ export default function SetelanPage() {
           <h2 className="font-display">Setelan</h2>
           <p className="font-body">Lorem ipsum</p>
 
-          {/* Setting List */}
+          {/* Setting List with Links */}
           {settings.map((setting, index) => (
-            <div key={index} className="setting-item">
-              <span className="material-symbols-outlined icon">{setting.icon}</span>
-              <div className="text">
-                <h3>{setting.title}</h3>
-                <p>{setting.description}</p>
+            <Link key={index} href={setting.link}>
+              <div className="setting-item">
+                <span className="material-symbols-outlined icon">{setting.icon}</span>
+                <div className="text">
+                  <h3>{setting.title}</h3>
+                  <p>{setting.description}</p>
+                </div>
+                <span className="material-symbols-outlined arrow">chevron_right</span>
               </div>
-              <span className="material-symbols-outlined arrow">chevron_right</span>
-            </div>
+            </Link>
           ))}
         </div>
       </main>
