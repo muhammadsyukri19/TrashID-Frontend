@@ -25,7 +25,18 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
     if (onClick) {
       onClick();
     } else {
-      window.location.href = "/dashboard/settings/profile";
+      // Ambil data user dari localStorage untuk mengetahui role, atau redirect berdasar role profile API
+      try {
+        const userObj = localStorage.getItem("user");
+        if (userObj) {
+          const user = JSON.parse(userObj);
+          if (user.role === "admin") {
+            window.location.href = "/admin/settings";
+            return;
+          }
+        }
+      } catch (e) {}
+      window.location.href = "/dashboard/settings";
     }
   };
 

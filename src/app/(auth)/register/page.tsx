@@ -12,6 +12,8 @@ export default function RegisterPage() {
     fullName: "",
     username: "",
     email: "",
+    phone: "",
+    address: "",
     password: "",
   });
 
@@ -33,6 +35,23 @@ export default function RegisterPage() {
     setSuccessMsg("");
 
     try {
+      const response = await fetch("http://localhost:5001/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Gagal melakukan pendaftaran. Silakan coba lagi.",
+        );
+      }
+
+      setSuccessMsg("Pendaftaran berhasil! Mengalihkan ke halaman login...");
+
+      // Tunggu 2 detik kemudian pindah ke halaman login
       setTimeout(() => {
         router.push("/login");
       }, 2000);
@@ -221,6 +240,52 @@ export default function RegisterPage() {
                       onChange={handleChange}
                       placeholder="name@example.com"
                       type="email"
+                    />
+                  </div>
+                </div>
+                {/* Phone */}
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold text-[#154212] ml-1 uppercase tracking-wider"
+                    htmlFor="phone"
+                  >
+                    Nomor WhatsApp / HP
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#72796e]">
+                      call
+                    </span>
+                    <input
+                      className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="081234567890"
+                      type="tel"
+                    />
+                  </div>
+                </div>
+                {/* Address */}
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold text-[#154212] ml-1 uppercase tracking-wider"
+                    htmlFor="address"
+                  >
+                    Alamat Lengkap
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#72796e]">
+                      location_on
+                    </span>
+                    <input
+                      className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="Jl. Mawar No. 1, Kota Anda"
+                      type="text"
                     />
                   </div>
                 </div>

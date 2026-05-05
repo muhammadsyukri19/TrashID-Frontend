@@ -1,130 +1,89 @@
-"use client"; // Menandakan ini adalah Client Component
-
-import React, { useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function ProfilPage() {
-  const [user, setUser] = useState({
-    name: "User Name",
-    email: "username@gmail.com",
-    phone: "0812++++++++",
-    address: "Jalan jalan, Desa desa",
-  });
+export default function UserProfileViewPage() {
+  const router = useRouter();
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return router.push("/login");
+
+      const res = await fetch("http://localhost:5001/api/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok) setProfile(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const defaultAvatar = "https://ui-avatars.com/api/?name=" + (profile?.username || "U") + "&background=ebf5e9&color=154212";
+  const displayImage = profile?.profilePicture || defaultAvatar;
 
   return (
-    <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,0,24&display=swap');
+    <div className="w-full h-full min-h-[calc(100vh-80px)] flex flex-col font-body text-[#1a1c1c] p-6 lg:p-8 animate-fade-in">
+      <div className="flex items-center gap-2 text-[13px] font-bold text-zinc-500 mb-6 shrink-0">
+        <Link href="/dashboard/settings" className="hover:text-[#154212] transition-colors">Setelan</Link>
+        <span>/</span>
+        <span className="text-[#154212]">Profil Saya</span>
+      </div>
 
-          .font-headline, .font-display { font-family: 'Manrope', sans-serif; }
-          .font-body { font-family: 'Inter', sans-serif; }
-
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          }
-
-          .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-          }
-
-          .container h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #154212;
-            margin-bottom: 20px;
-          }
-
-          .profile-card {
-            display: flex;
-            justify-content: space-between;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          }
-
-          .profile-card .avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background-color: #bcf0ae;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #154212;
-            font-size: 36px;
-            margin-right: 20px;
-          }
-
-          .profile-card .details {
-            flex-grow: 1;
-          }
-
-          .profile-card .details h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #154212;
-            margin-bottom: 10px;
-          }
-
-          .profile-card .details p {
-            font-size: 14px;
-            color: #42493e;
-            margin-bottom: 5px;
-          }
-
-          .edit-button {
-            padding: 8px 16px;
-            background-color: #154212;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-          }
-
-          .edit-button:hover {
-            background-color: #006e1c;
-          }
-        `,
-      }}
-      />
-
-      <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto bg-[#f9f9f9] min-h-screen">
-        <div className="container">
-          <h2 className="font-display">Profil Saya</h2>
-          <p className="font-body text-lg text-[#42493e] mb-8">
-            Ambil atau unggah foto kondisi TPU untuk dilaporkan.
-          </p>
-
-          {/* Profil Card */}
-          <div className="profile-card">
-            <div className="avatar">
-              {/* Ganti dengan gambar profil pengguna jika ada */}
-              <span className="material-symbols-outlined">person</span>
-            </div>
-            <div className="details">
-              <h3>{user.name}</h3>
-              <p>{user.email}</p>
-              <p><strong>Nama Lengkap:</strong> {user.name}</p>
-              <p><strong>Nomor Telepon:</strong> {user.phone}</p>
-              <p><strong>Alamat:</strong> {user.address}</p>
-            </div>
-            <Link href="/dashboard/settings/profile/edit">
-              <button className="edit-button">Edit Profil</button>
-            </Link>
+      <div className="bg-white border border-zinc-200 rounded-3xl p-8 lg:p-12 w-full flex-1 flex flex-col shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
+          <div>
+            <h1 className="font-extrabold text-3xl tracking-tight text-[#154212] mb-2">Profil Saya</h1>
+            <p className="text-[14px] text-zinc-500">Amati atau unggah detail profil untuk disesuaikan.</p>
           </div>
         </div>
-      </main>
-    </>
+
+        {loading ? (
+          <div className="flex-1 flex justify-center items-center">
+            <span className="w-10 h-10 border-4 border-zinc-200 border-t-[#154212] rounded-full animate-spin"></span>
+          </div>
+        ) : (
+          <div className="flex flex-col w-full h-full">
+            {/* Avatar centered at top */}
+            <div className="flex flex-col items-center justify-center mb-12">
+               <div className="relative w-36 h-36 rounded-full overflow-hidden border border-zinc-200 shadow-md mb-6">
+                 <img src={displayImage} alt="Profile" className="w-full h-full object-cover" />
+               </div>
+               <h2 className="text-2xl font-extrabold text-[#1a1c1c] mb-1">{profile?.fullName || profile?.username || "Pengguna"}</h2>
+               <p className="text-[14px] text-zinc-500 font-medium mb-4">{profile?.email || "-"}</p>
+               <Link href="/dashboard/settings/profile/edit" className="px-6 py-2 border border-zinc-300 text-zinc-700 hover:border-[#154212] hover:text-[#154212] hover:bg-zinc-50 font-bold text-[13px] rounded-lg transition-all shadow-sm">
+                 Edit Profil
+               </Link>
+            </div>
+
+            {/* Profile Details in Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-12 gap-x-12 w-full px-4 border-t border-zinc-100 pt-12">
+              <div className="flex flex-col">
+                <span className="text-[14px] font-extrabold text-[#1A1C1C] mb-2">Nama Lengkap</span>
+                <span className="text-[15px] font-medium text-zinc-600 pb-2 border-b border-zinc-100">{profile?.fullName || "-"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[14px] font-extrabold text-[#1A1C1C] mb-2">Nomor Telepon</span>
+                <span className="text-[15px] font-medium text-zinc-600 pb-2 border-b border-zinc-100">{profile?.phone || "-"}</span>
+              </div>
+              <div className="md:col-span-2 flex flex-col">
+                <span className="text-[14px] font-extrabold text-[#1A1C1C] mb-2">Alamat</span>
+                <span className="text-[15px] font-medium text-zinc-600 pb-2 border-b border-zinc-100 min-h-[40px]">{profile?.address || "-"}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

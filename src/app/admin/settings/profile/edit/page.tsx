@@ -47,7 +47,7 @@ export default function UserProfileEditPage() {
       if (res.ok) {
         setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
         const roles = localStorage.getItem("role");
-        const path = roles === "admin" ? "/admin/settings/profile" : "/dashboard/settings/profile";
+        const path = roles === "admin" ? "/admin/settings/profile" : "/admin/settings/profile";
         setTimeout(() => router.push(path), 1200);
       } else {
         const data = await res.json();
@@ -66,9 +66,9 @@ export default function UserProfileEditPage() {
   return (
     <div className="w-full h-full min-h-[calc(100vh-80px)] flex flex-col font-body text-[#1a1c1c] p-6 lg:p-8 animate-fade-in">
       <div className="flex items-center gap-2 text-[13px] font-bold text-zinc-500 mb-6 shrink-0">
-        <Link href="/dashboard/settings" className="hover:text-[#154212] transition-colors">Setelan</Link>
+        <Link href="/admin/settings" className="hover:text-[#154212] transition-colors">Setelan</Link>
         <span>/</span>
-        <Link href="/dashboard/settings/profile" className="hover:text-[#154212] transition-colors">Profil Saya</Link>
+        <Link href="/admin/settings/profile" className="hover:text-[#154212] transition-colors">Profil Saya</Link>
         <span>/</span>
         <span className="text-[#154212]">Edit Profil</span>
       </div>
@@ -132,7 +132,7 @@ export default function UserProfileEditPage() {
              </div>
 
              <div className="mt-12 pt-8 border-t border-zinc-100 flex justify-between items-center w-full max-w-4xl mx-auto">
-                 <Link href="/dashboard/settings/profile" className="px-10 py-3.5 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded-xl text-[14px] font-bold shadow-md transition-colors text-center w-full sm:w-auto">
+                 <Link href="/admin/settings/profile" className="px-10 py-3.5 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded-xl text-[14px] font-bold shadow-md transition-colors text-center w-full sm:w-auto">
                      Batal
                  </Link>
                  <button type="submit" disabled={isLoading} className="px-10 py-3.5 bg-[#154212] hover:bg-[#10360d] text-white rounded-xl text-[14px] font-bold shadow-md disabled:opacity-70 transition-colors w-full sm:w-auto">
