@@ -32,6 +32,11 @@ export default function UserRiwayatPage() {
       .catch(() => setLoading(false));
   }, [router]);
 
+  // Pagination Logic
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(reports.length / itemsPerPage);
+  const displayedReports = reports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   // Skeleton Loading Component
   const TableSkeleton = () => (
     <div className="bg-white rounded-3xl shadow-sm border border-zinc-100 overflow-hidden animate-pulse">
@@ -185,7 +190,8 @@ export default function UserRiwayatPage() {
              </div>
           </div>
         )}
-      )}
+      </section>
+    )}
     </main>
   );
 }
