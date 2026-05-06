@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,6 +57,58 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const loginGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      setErrorMsg("");
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      
+      try {
+        // useGoogleLogin returns an access token, but our backend expects an ID Token or we can fetch profile on frontend
+        // Note: useGoogleLogin by default returns access_token. 
+        // For security, usually we send this to backend or use the GoogleLogin component which returns id_token.
+        // Let's fetch the info using access_token and send to backend
+        const resInfo = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+        });
+        const googleUser = await resInfo.json();
+
+        const response = await fetch(`${API_BASE}/auth/google-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            credential: tokenResponse.access_token, // Access Token
+            // We'll update the backend to handle access_token if needed, 
+            // or just send the profile info directly if the backend trusts it (less secure but easier)
+            // Ideally backend verifies id_token.
+            // Let's send what we have.
+            email: googleUser.email,
+            fullName: googleUser.name,
+            googleId: googleUser.sub,
+            profilePicture: googleUser.picture
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Google login failed");
+
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+
+        if (data.data.user.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
+      } catch (err: any) {
+        setErrorMsg(err.message || "Gagal masuk dengan Google");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => setErrorMsg("Gagal melakukan autentikasi Google"),
+  });
   return (
     <>
       {/* 
@@ -260,8 +313,10 @@ export default function LoginPage() {
                   </div>
 
                   <button
+                    onClick={() => loginGoogle()}
                     className="w-full bg-white border border-[#c2c9bb]/30 text-[#1a1c1c] font-semibold py-4 rounded-md hover:bg-[#f3f3f3] transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                     type="button"
+                    disabled={loading}
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path
@@ -269,7 +324,7 @@ export default function LoginPage() {
                         fill="#EA4335"
                       ></path>
                     </svg>
-                    <span>Masuk dengan Google</span>
+                    <span>{loading ? "Menghubungkan..." : "Masuk dengan Google"}</span>
                   </button>
                 </div>
               </form>

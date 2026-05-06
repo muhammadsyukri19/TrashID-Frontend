@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   }
 };
 
+import { Providers } from "@/components/Providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,7 +53,9 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body className="min-h-full flex flex-col font-body">{children}</body>
+      <body className="min-h-full flex flex-col font-body">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

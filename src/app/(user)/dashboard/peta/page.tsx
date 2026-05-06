@@ -84,23 +84,38 @@ export default function PetaTPUPage() {
 
   // Filter markers based on selected city and search query
   const displayedMarkers = allMarkers.filter((marker) => {
-    const matchCity = selectedCity === "" || marker.address.toLowerCase().includes(selectedCity.toLowerCase());
-    const matchSearch = searchQuery === "" || marker.name.toLowerCase().includes(searchQuery.toLowerCase()) || marker.address.toLowerCase().includes(searchQuery.toLowerCase());
+    const cityLower = selectedCity.toLowerCase();
+    const nameLower = marker.name.toLowerCase();
+    const addressLower = marker.address.toLowerCase();
+    
+    // Match city if it's in the name OR address
+    const matchCity = selectedCity === "" || 
+                     nameLower.includes(cityLower) || 
+                     addressLower.includes(cityLower);
+                     
+    const matchSearch = searchQuery === "" || 
+                        nameLower.includes(searchQuery.toLowerCase()) || 
+                        addressLower.includes(searchQuery.toLowerCase());
+                        
     return matchCity && matchSearch;
   });
 
   // Handle City Change
+  const [mapZoom, setMapZoom] = useState(8);
+
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const city = e.target.value;
     setSelectedCity(city);
-    setUserLocation(null); // Reset user location view
+    setUserLocation(null); 
     
     if (city === "") {
       setMapCenter(DEFAULT_CENTER);
+      setMapZoom(8);
     } else {
       const foundCity = ACEH_CITIES.find(c => c.name === city);
       if (foundCity) {
         setMapCenter([foundCity.lat, foundCity.lng]);
+        setMapZoom(13); // Zoom in closer when a city is selected
       }
     }
   };
@@ -204,7 +219,7 @@ export default function PetaTPUPage() {
                 <p className="text-[#154212] font-semibold">Memuat Data TPU...</p>
               </div>
             ) : (
-              <MapComponent markers={displayedMarkers} center={mapCenter} userLocation={userLocation} />
+              <MapComponent markers={displayedMarkers} center={mapCenter} zoom={mapZoom} userLocation={userLocation} />
             )}
           </div>
         </section>

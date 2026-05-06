@@ -101,6 +101,13 @@ export default function LaporTPUPage() {
         body: formData,
       });
 
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Non-JSON response received:", text.substring(0, 200));
+        throw new Error(`Server tidak merespon dengan format yang benar (Status: ${response.status}). Pastikan Backend sudah berjalan di port 5001.`);
+      }
+
       const data = await response.json();
       if (response.ok && data.status === "success") {
         setMessage({ type: "success", text: "Laporan berhasil dikirim!" });
@@ -113,9 +120,9 @@ export default function LaporTPUPage() {
       } else {
         setMessage({ type: "error", text: data.message || "Gagal mengirim laporan." });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submit report error:", error);
-      setMessage({ type: "error", text: "Terjadi kesalahan pada server." });
+      setMessage({ type: "error", text: error.message || "Terjadi kesalahan pada server." });
     } finally {
       setIsLoading(false);
     }
@@ -198,7 +205,7 @@ export default function LaporTPUPage() {
                     Klik untuk Ambil atau Unggah Foto TPS
                   </h3>
                   <p className="text-sm text-[#9aaa96] mb-7 font-medium">
-                    Format .jpg atau .jpeg
+                    Format .jpg, .jpeg, atau .png
                   </p>
                 </>
               )}

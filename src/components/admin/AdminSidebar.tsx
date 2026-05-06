@@ -101,19 +101,6 @@ export default function AdminSidebar() {
         </div>
 
         <div className="px-4">
-          {/* Admin Profile Card */}
-          <div className="flex items-center gap-3 p-4 bg-[#f3f3f3] rounded-xl mb-4 border border-[#e2e2e2]/50">
-            <img
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full object-cover shadow-sm bg-white"
-              src="https://ui-avatars.com/api/?name=Admin&background=154212&color=fff"
-            />
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold text-[#1a1c1c] truncate">Admin System</p>
-              <p className="text-xs text-[#72796e] truncate">Administrator</p>
-            </div>
-          </div>
-
           <button 
             onClick={() => setShowLogoutModal(true)}
             className="w-full flex items-center gap-4 text-[#ba1a1a] px-4 py-3 font-['Manrope'] text-sm font-semibold hover:bg-red-50 transition-all duration-300 rounded-full group"

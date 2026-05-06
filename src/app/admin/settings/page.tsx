@@ -5,9 +5,9 @@ import Link from "next/link";
 export default function UserSettingsMenuPage() {
   const menus = [
     { title: "Profil", desc: "Atur informasi dan foto profil", icon: "person", href: "/admin/settings/profile" },
-    { title: "Notifikasi", desc: "Kelola preferensi notifikasi", icon: "notifications", href: "#" },
-    { title: "Privacy", desc: "Pengaturan keamanan & data pribadi", icon: "lock", href: "#" },
-    { title: "Bantuan", desc: "Bantuan dan informasi aplikasi", icon: "help", href: "#" }
+    { title: "Notifikasi", desc: "Kelola preferensi notifikasi", icon: "notifications", href: "/admin/settings/notifications" },
+    { title: "Privacy", desc: "Pengaturan keamanan & data pribadi", icon: "lock", href: "/admin/settings/privacy" },
+    { title: "Bantuan", desc: "Bantuan dan informasi aplikasi", icon: "help", href: "/admin/settings/help" }
   ];
 
   return (

@@ -21,19 +21,25 @@ function LocationMarker({ position, setPosition }: { position: L.LatLng | null, 
   });
 
   useEffect(() => {
+    if (!map) return;
+    
     // Try to get user location on load
     if (!position && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const latlng = new L.LatLng(pos.coords.latitude, pos.coords.longitude);
           setPosition(latlng);
-          map.flyTo(latlng, 15);
+          setTimeout(() => {
+            if (map) map.flyTo(latlng, 15);
+          }, 100);
         },
         () => {
           // Fallback to Aceh
           const latlng = new L.LatLng(4.6951, 96.7494);
           setPosition(latlng);
-          map.flyTo(latlng, 8);
+          setTimeout(() => {
+            if (map) map.flyTo(latlng, 8);
+          }, 100);
         }
       );
     }

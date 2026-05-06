@@ -37,6 +37,7 @@ export default function AdminTpuPage() {
   const [formData, setFormData] = useState({ nama_tps: "", deskripsi: "" });
   const [selectedCoords, setSelectedCoords] = useState<{lat: number, lng: number} | null>(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   
   const [stats, setStats] = useState([
     { label: "Total Fasilitas", value: "0", icon: "location_city", tone: "green" },
@@ -202,7 +203,7 @@ export default function AdminTpuPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e7efe3]">
-              {tpsList.map((tps, index) => (
+              {tpsList.slice((currentPage - 1) * 10, currentPage * 10).map((tps, index) => (
                 <tr key={tps._id} className={`${index % 2 === 0 ? "bg-white" : "bg-[#f0f7ef]"} hover:bg-[#e8f3e8] transition-colors`}>
                   <td className="px-5 py-4 text-sm font-bold text-[#1a1c1c]">{tps.nama_tps}</td>
                   <td className="px-5 py-4 text-sm text-zinc-600">{tps.deskripsi || "-"}</td>
@@ -228,6 +229,44 @@ export default function AdminTpuPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {tpsList.length > 10 && (
+          <div className="flex items-center justify-between px-5 py-4 border-t border-[#eee9df]">
+            <p className="text-xs text-zinc-500 font-medium">
+              Menampilkan <span className="font-bold text-[#154212]">{(currentPage - 1) * 10 + 1}</span> - <span className="font-bold text-[#154212]">{Math.min(currentPage * 10, tpsList.length)}</span> dari <span className="font-bold text-[#154212]">{tpsList.length}</span> data
+            </p>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-30 transition-colors"
+              >
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
+              </button>
+              {[...Array(Math.ceil(tpsList.length / 10))].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
+                    currentPage === i + 1 
+                      ? "bg-[#154212] text-white shadow-md shadow-[#154212]/20" 
+                      : "text-zinc-500 hover:bg-gray-100"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(tpsList.length / 10), prev + 1))}
+                disabled={currentPage === Math.ceil(tpsList.length / 10)}
+                className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-30 transition-colors"
+              >
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Map Section */}

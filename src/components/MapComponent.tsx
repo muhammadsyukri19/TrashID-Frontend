@@ -25,12 +25,17 @@ const userIcon = new L.DivIcon({
 interface MapProps {
   markers: Array<{ lat: number; lng: number; status: string; name?: string; address?: string }>;
   center: [number, number];
+  zoom?: number;
   userLocation?: [number, number] | null;
 }
 
 function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
-  map.setView(center, zoom);
+  useEffect(() => {
+    map.flyTo(center, zoom, {
+      duration: 1.5
+    });
+  }, [center, zoom, map]);
   return null;
 }
 
@@ -45,17 +50,17 @@ function MapEffect() {
   return null;
 }
 
-export default function MapComponent({ markers, center, userLocation }: MapProps) {
+export default function MapComponent({ markers, center, zoom = 8, userLocation }: MapProps) {
   return (
     <div className="w-full h-full relative" style={{ minHeight: "500px" }}>
       <MapContainer 
         center={center} 
-        zoom={8} 
+        zoom={zoom} 
         scrollWheelZoom={true}
         style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0, borderRadius: "12px", zIndex: 1 }}
       >
         <MapEffect />
-        <ChangeView center={center} zoom={userLocation ? 13 : 8} />
+        <ChangeView center={center} zoom={userLocation ? 13 : zoom} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

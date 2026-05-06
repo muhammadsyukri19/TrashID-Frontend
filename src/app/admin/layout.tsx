@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import Link from "next/link";
 
 export default function AdminLayout({
   children,
@@ -10,21 +11,21 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Mengecek apakah token ada
     const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
       return;
     }
 
-    // Opsional: Cek juga apakah user memang admin
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (user.role !== "admin") {
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      if (userData.role !== "admin") {
         router.push("/dashboard");
       }
+      setUser(userData);
     } catch (e) {
       router.push("/login");
     }
@@ -45,10 +46,30 @@ export default function AdminLayout({
 
       <AdminSidebar />
 
-      <div className="lg:ml-72 flex-1 min-h-screen transition-all duration-300">
-        <div className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto">
+      <div className="lg:ml-72 flex-1 min-h-screen flex flex-col transition-all duration-300">
+        {/* Top Header Section */}
+        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-[#e2e2e2] sticky top-0 z-30 px-8 flex items-center justify-between">
+          <div className="hidden lg:block">
+            <h2 className="text-sm font-bold text-[#6f7b64] uppercase tracking-widest">Admin Panel</h2>
+          </div>
+          
+          <Link href="/admin/settings/profile" className="flex items-center gap-3 hover:bg-zinc-50 p-2 rounded-xl transition-all border border-transparent hover:border-zinc-200">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold text-[#1a1c1c]">{user?.fullName || "Admin System"}</p>
+              <p className="text-[11px] font-bold text-[#154212] uppercase tracking-tighter">Administrator</p>
+            </div>
+            <img
+              src={user?.profilePicture || `https://ui-avatars.com/api/?name=${user?.username || 'A'}&background=154212&color=fff`}
+              alt="Avatar"
+              className="w-10 h-10 rounded-full object-cover border border-zinc-200 shadow-sm"
+            />
+          </Link>
+        </header>
+
+        {/* Content Area */}
+        <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto flex-1">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );
