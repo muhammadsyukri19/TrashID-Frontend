@@ -1,5 +1,5 @@
 // Simple API wrapper using fetch
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
 
 // Ensure no trailing slash in BASE_URL
 const BASE_URL = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
@@ -49,3 +49,4 @@ const API = {
 };
 
 export default API;
+

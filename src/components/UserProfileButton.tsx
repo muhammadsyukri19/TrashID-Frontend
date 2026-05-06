@@ -10,9 +10,10 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
     const token = localStorage.getItem("token");
     if (token) {
-      fetch("http://localhost:5001/api/users/profile", {
+      fetch(`${API_BASE}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
@@ -40,10 +41,13 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
     }
   };
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+  const BACKEND_BASE = API_BASE.replace("/api", "");
+
   const displayImage = profile?.profilePicture
     ? profile.profilePicture.startsWith("http")
       ? profile.profilePicture
-      : `http://localhost:5001${profile.profilePicture}`
+      : `${BACKEND_BASE}${profile.profilePicture}`
     : "https://ui-avatars.com/api/?name=" +
       (profile?.fullName || "User") +
       "&background=154212&color=fff";
@@ -77,3 +81,5 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
     </button>
   );
 }
+
+

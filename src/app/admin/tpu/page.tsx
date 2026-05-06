@@ -47,7 +47,7 @@ export default function AdminTpuPage() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5001/api/tps");
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/tps");
       const json = await response.json();
       if (json.status === "success") {
         setTpsList(json.data);
@@ -85,7 +85,7 @@ export default function AdminTpuPage() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5001/api/tps", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/tps", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -324,3 +324,6 @@ export default function AdminTpuPage() {
     </div>
   );
 }
+
+
+

@@ -34,8 +34,9 @@ export default function RegisterPage() {
     setErrorMsg("");
     setSuccessMsg("");
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
+      const response = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -425,3 +426,5 @@ export default function RegisterPage() {
     </>
   );
 }
+
+

@@ -49,7 +49,8 @@ export default function PetaTPUPage() {
   useEffect(() => {
     const fetchTPSData = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/tps");
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+        const response = await fetch(`${API_BASE}/tps`);
         const json = await response.json();
         if (json.status === "success") {
           const tpsData = json.data.map((tps: any) => {
@@ -236,3 +237,4 @@ export default function PetaTPUPage() {
     </>
   );
 }
+

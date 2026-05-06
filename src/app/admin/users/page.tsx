@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5001/api/users", {
+      const response = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/users", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -166,7 +166,7 @@ export default function AdminUsersPage() {
                     <div className="flex items-center gap-3">
                       {user.profilePicture ? (
                         <img 
-                          src={user.profilePicture.startsWith('http') ? user.profilePicture : `http://localhost:5001${user.profilePicture}`} 
+                          src={user.profilePicture.startsWith('http') ? user.profilePicture : `${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api").replace("/api", "")}${user.profilePicture}`} 
                           alt={user.fullName} 
                           className="h-10 w-10 rounded-full object-cover border border-[#e7efe3]"
                         />
@@ -246,3 +246,6 @@ export default function AdminUsersPage() {
     </div>
   );
 }
+
+
+

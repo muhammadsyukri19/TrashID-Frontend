@@ -45,7 +45,7 @@ export default function VerifyOTPPage() {
       return;
     }
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
 
     setLoading(true);
     try {
@@ -122,7 +122,9 @@ export default function VerifyOTPPage() {
                 {digits.map((d, i) => (
                   <input
                     key={i}
-                    ref={(el) => (inputsRef.current[i] = el)}
+                    ref={(el) => {
+                      inputsRef.current[i] = el;
+                    }}
                     value={d}
                     onChange={(e) => handleChange(i, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, i)}
@@ -149,3 +151,5 @@ export default function VerifyOTPPage() {
     </>
   );
 }
+
+

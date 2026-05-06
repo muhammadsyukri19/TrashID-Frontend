@@ -20,7 +20,7 @@ export default function UserProfileEditPage() {
     try {
       const token = localStorage.getItem("token");
       if (!token) return router.push("/login");
-      const res = await fetch("http://localhost:5001/api/users/profile", { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/users/profile", { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (res.ok) setProfile({ ...data, password: "" });
     } catch (e) {
@@ -43,7 +43,7 @@ export default function UserProfileEditPage() {
       if (password) formData.append("password", password);
       if (file) formData.append("profilePicture", file);
 
-      const res = await fetch("http://localhost:5001/api/users/profile", { method: "PATCH", headers: { Authorization: `Bearer ${token}` }, body: formData });
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/users/profile", { method: "PATCH", headers: { Authorization: `Bearer ${token}` }, body: formData });
       if (res.ok) {
         setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
         const roles = localStorage.getItem("role");
@@ -145,3 +145,6 @@ export default function UserProfileEditPage() {
     </div>
   );
 }
+
+
+

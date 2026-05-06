@@ -49,7 +49,7 @@ export default function AdminReportsPage() {
   const fetchReports = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5001/api/tps/reports", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/tps/reports", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -172,14 +172,14 @@ export default function AdminReportsPage() {
               </button>
             </div>
             <img 
-              src={selectedImage.startsWith('http') ? selectedImage : `http://localhost:5001${selectedImage}`} 
+              src={selectedImage.startsWith('http') ? selectedImage : `${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api").replace("/api", "")}${selectedImage}`} 
               alt="Bukti Laporan" 
               className="w-full h-auto max-h-[85vh] object-contain bg-zinc-900" 
             />
             <div className="p-4 bg-white flex justify-between items-center border-t border-gray-100">
               <p className="text-sm font-bold text-[#154212]">Bukti Foto Laporan</p>
               <a 
-                href={selectedImage.startsWith('http') ? selectedImage : `http://localhost:5001${selectedImage}`} 
+                href={selectedImage.startsWith('http') ? selectedImage : `${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api").replace("/api", "")}${selectedImage}`} 
                 target="_blank" 
                 className="text-xs font-bold text-[#2d6fb1] hover:underline"
               >
@@ -316,7 +316,7 @@ export default function AdminReportsPage() {
                     <div className="flex flex-col gap-2">
                       <div className="w-20 h-12 rounded bg-gray-100 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity border border-gray-200" onClick={() => setSelectedImage(report.foto_url)}>
                          <img 
-                           src={report.foto_url.startsWith('http') ? report.foto_url : `http://localhost:5001${report.foto_url}`} 
+                           src={report.foto_url.startsWith('http') ? report.foto_url : `${(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api").replace("/api", "")}${report.foto_url}`} 
                            alt="Bukti" 
                            className="w-full h-full object-cover" 
                          />
@@ -394,3 +394,6 @@ export default function AdminReportsPage() {
     </div>
   );
 }
+
+
+

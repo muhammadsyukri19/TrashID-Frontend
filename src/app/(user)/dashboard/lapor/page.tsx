@@ -24,7 +24,8 @@ export default function LaporTPUPage() {
   React.useEffect(() => {
     const fetchTps = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/tps");
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+        const res = await fetch(`${API_BASE}/tps`);
         const json = await res.json();
         if (json.status === "success") {
           setTpsList(json.data);
@@ -93,7 +94,8 @@ export default function LaporTPUPage() {
       formData.append("lng", lng.toString());
       formData.append("deskripsi", deskripsi);
 
-      const response = await fetch("http://localhost:5001/api/tps/report", {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const response = await fetch(`${API_BASE}/tps/report`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData,
@@ -322,3 +324,4 @@ export default function LaporTPUPage() {
     </>
   );
 }
+
