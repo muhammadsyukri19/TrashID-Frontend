@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function VerifyOTPPage() {
+function VerifyOTPContent() {
   const router = useRouter();
   const search = useSearchParams();
   const mode = search.get("mode") || "register"; // 'register' or 'reset'
@@ -89,6 +89,57 @@ export default function VerifyOTPPage() {
   };
 
   return (
+    <main className="min-h-screen flex flex-col md:flex-row overflow-hidden bg-[#f9f9f9] font-body text-[#1a1c1c]">
+      <section className="w-full md:w-1/2 hidden md:flex items-center justify-center bg-[#2d5a27] p-12">
+        <div className="text-center max-w-lg text-white">
+          <h1 className="font-headline text-4xl font-extrabold text-[#9dd090] mb-4">Verifikasi Kode</h1>
+          <p className="opacity-80">Masukkan kode 6 digit yang kami kirimkan ke email Anda.</p>
+        </div>
+      </section>
+
+      <section className="w-full md:w-1/2 flex items-center justify-center p-8">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold">Masukkan Kode OTP</h2>
+            <p className="text-sm text-zinc-600">Kode dikirim ke: <strong>{email}</strong></p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex justify-between gap-2">
+              {digits.map((d, i) => (
+                <input
+                  key={i}
+                  ref={(el) => {
+                    inputsRef.current[i] = el;
+                  }}
+                  value={d}
+                  onChange={(e) => handleChange(i, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, i)}
+                  className="w-12 h-14 text-center text-2xl rounded-md bg-[#f3f3f3]"
+                  maxLength={1}
+                  inputMode="numeric"
+                />
+              ))}
+            </div>
+
+            {error && <div className="text-red-600">{error}</div>}
+
+            <button type="submit" disabled={loading} className="w-full py-3 bg-[#154212] text-white rounded-md">
+              {loading ? "Memverifikasi..." : "Verifikasi"}
+            </button>
+          </form>
+
+          <div className="mt-6 text-sm">
+            <Link href="/login" className="text-zinc-600 hover:text-[#154212]">Kembali ke login</Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export default function VerifyOTPPage() {
+  return (
     <>
       <style
         dangerouslySetInnerHTML={{
@@ -101,53 +152,9 @@ export default function VerifyOTPPage() {
       `,
         }}
       />
-
-      <main className="min-h-screen flex flex-col md:flex-row overflow-hidden bg-[#f9f9f9] font-body text-[#1a1c1c]">
-        <section className="w-full md:w-1/2 hidden md:flex items-center justify-center bg-[#2d5a27] p-12">
-          <div className="text-center max-w-lg text-white">
-            <h1 className="font-headline text-4xl font-extrabold text-[#9dd090] mb-4">Verifikasi Kode</h1>
-            <p className="opacity-80">Masukkan kode 6 digit yang kami kirimkan ke email Anda.</p>
-          </div>
-        </section>
-
-        <section className="w-full md:w-1/2 flex items-center justify-center p-8">
-          <div className="w-full max-w-md">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold">Masukkan Kode OTP</h2>
-              <p className="text-sm text-zinc-600">Kode dikirim ke: <strong>{email}</strong></p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex justify-between gap-2">
-                {digits.map((d, i) => (
-                  <input
-                    key={i}
-                    ref={(el) => {
-                      inputsRef.current[i] = el;
-                    }}
-                    value={d}
-                    onChange={(e) => handleChange(i, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e, i)}
-                    className="w-12 h-14 text-center text-2xl rounded-md bg-[#f3f3f3]"
-                    maxLength={1}
-                    inputMode="numeric"
-                  />
-                ))}
-              </div>
-
-              {error && <div className="text-red-600">{error}</div>}
-
-              <button type="submit" disabled={loading} className="w-full py-3 bg-[#154212] text-white rounded-md">
-                {loading ? "Memverifikasi..." : "Verifikasi"}
-              </button>
-            </form>
-
-            <div className="mt-6 text-sm">
-              <Link href="/login" className="text-zinc-600 hover:text-[#154212]">Kembali ke login</Link>
-            </div>
-          </div>
-        </section>
-      </main>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Memuat...</div>}>
+        <VerifyOTPContent />
+      </Suspense>
     </>
   );
 }

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 export default function BantuanPage() {
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState<number | null>(null);
 
   const toggleFAQ = (index: number) => {
     if (open === index) {
