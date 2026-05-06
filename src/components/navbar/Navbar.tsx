@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation'; // Import useRouter untuk navigasi
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [active, setActive] = useState("platform");
-  const router = useRouter(); // Inisialisasi router untuk navigasi
+  const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
 
   const menu = [
     { id: "platform", label: "Platform" },
@@ -15,27 +16,34 @@ export default function Navbar() {
     { id: "tentang", label: "Tentang" },
   ];
 
-  // 🔥 SCROLL FUNCTION (SMOOTH)
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
+    const offset = 80;
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = el.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
 
-    el.scrollIntoView({
+    window.scrollTo({
+      top: offsetPosition,
       behavior: "smooth",
-      block: "start",
     });
   };
 
-  // ACTIVE DETECT
   useEffect(() => {
     const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+      
+      const scrollPosition = window.scrollY + 100;
+
       menu.forEach((item) => {
         const section = document.getElementById(item.id);
         if (section) {
-          const top = section.offsetTop - 120;
+          const top = section.offsetTop;
           const bottom = top + section.offsetHeight;
 
-          if (window.scrollY >= top && window.scrollY < bottom) {
+          if (scrollPosition >= top && scrollPosition < bottom) {
             setActive(item.id);
           }
         }
@@ -46,45 +54,57 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Menangani klik pada tombol Mulai yang mengarah ke halaman login
-  const handleMulaiClick = () => {
-    router.push('/login'); // Navigasi ke halaman login
-  };
-
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-gray-100 px-10 py-4 flex items-center justify-between shadow-sm">
+    <nav 
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 px-6 md:px-12 py-4 flex items-center justify-between ${
+        scrolled 
+          ? "bg-white/80 backdrop-blur-md shadow-lg py-3" 
+          : "bg-transparent py-5"
+      }`}
+    >
       {/* Logo */}
-      <div className="flex items-center gap-2">
-        <Image src="/logo.png" alt="TrashID Logo" width={40} height={40} />
-        <span className="font-semibold text-green-700 text-lg">
+      <div className="flex items-center gap-3 cursor-pointer group" onClick={() => scrollToSection('platform')}>
+        <div className="relative w-10 h-10 transition-transform duration-300 group-hover:rotate-12">
+          <Image src="/logo.png" alt="TrashID Logo" fill className="object-contain" />
+        </div>
+        <span className={`font-bold text-xl tracking-tight transition-colors duration-300 ${
+          scrolled ? "text-green-800" : "text-white"
+        }`}>
           TrashID
         </span>
       </div>
 
       {/* MENU */}
-      <div className="hidden md:flex items-center gap-8 text-gray-600 font-medium">
+      <div className="hidden md:flex items-center gap-10">
         {menu.map((item) => (
           <button
             key={item.id}
             onClick={() => scrollToSection(item.id)}
-            className={`transition pb-1 ${
+            className={`relative py-1 text-sm font-semibold transition-all duration-300 group ${
               active === item.id
-                ? "text-green-700 border-b-2 border-green-700"
-                : "hover:text-green-700"
+                ? (scrolled ? "text-green-700" : "text-green-400")
+                : (scrolled ? "text-gray-600 hover:text-green-700" : "text-gray-200 hover:text-white")
             }`}
           >
             {item.label}
+            <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-current transform origin-left transition-transform duration-300 ${
+              active === item.id ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+            }`} />
           </button>
         ))}
       </div>
 
       {/* BUTTON */}
       <button
-        onClick={handleMulaiClick} // Ganti dengan handleMulaiClick untuk navigasi ke login
-        className="bg-green-700 text-white px-6 py-2 rounded-md hover:bg-green-800 transition"
+        onClick={() => router.push('/login')}
+        className={`px-8 py-2.5 rounded-full font-bold text-sm transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 active:scale-95 ${
+          scrolled 
+            ? "bg-green-700 text-white hover:bg-green-800" 
+            : "bg-white text-green-900 hover:bg-green-50"
+        }`}
       >
         Mulai
       </button>
     </nav>
   );
-}
+}
