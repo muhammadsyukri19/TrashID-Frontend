@@ -38,9 +38,10 @@ export default function ResetPasswordPage() {
       setError("Email tidak tersedia");
       return;
     }
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/reset-password", {
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp, newPassword: password }),

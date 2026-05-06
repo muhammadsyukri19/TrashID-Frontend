@@ -13,30 +13,30 @@ export default function VerifyOTPPage() {
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const inputsRef = useRef([]);
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     // focus first input on mount
     inputsRef.current[0]?.focus();
   }, []);
 
-  const handleChange = (index, value) => {
+  const handleChange = (index: number, value: string) => {
     if (value.length > 1) value = value.slice(-1);
     const next = [...digits];
     next[index] = value;
     setDigits(next);
     if (value && inputsRef.current[index + 1]) {
-      inputsRef.current[index + 1].focus();
+      inputsRef.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (e, index) => {
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Backspace" && !digits[index] && inputsRef.current[index - 1]) {
-      inputsRef.current[index - 1].focus();
+      inputsRef.current[index - 1]?.focus();
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     const otp = digits.join("");
@@ -45,11 +45,13 @@ export default function VerifyOTPPage() {
       return;
     }
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
     setLoading(true);
     try {
       if (mode === "reset") {
         // Verify OTP for reset flow
-        const res = await fetch("http://localhost:5000/api/auth/verify-reset-otp", {
+        const res = await fetch(`${API_BASE}/auth/verify-reset-otp`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, otp }),
@@ -64,7 +66,7 @@ export default function VerifyOTPPage() {
         router.push(`/reset-password?email=${encodeURIComponent(email)}`);
       } else {
         // registration verification
-        const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+        const res = await fetch(`${API_BASE}/auth/verify-otp`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, otp }),
@@ -79,7 +81,7 @@ export default function VerifyOTPPage() {
         }
         router.push("/dashboard");
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Terjadi kesalahan");
     } finally {
       setLoading(false);
