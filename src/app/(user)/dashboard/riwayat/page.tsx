@@ -32,19 +32,25 @@ export default function UserRiwayatPage() {
       .catch(() => setLoading(false));
   }, [router]);
 
-  // Pagination Logic
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(reports.length / itemsPerPage);
-  const displayedReports = reports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  if (loading) {
-    return (
-      <div className="flex h-[70vh] flex-col items-center justify-center gap-4">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#154212] border-t-transparent shadow-sm"></div>
-        <p className="font-body text-sm font-bold text-[#154212] animate-pulse">Memuat riwayat laporan...</p>
-      </div>
-    );
-  }
+  // Skeleton Loading Component
+  const TableSkeleton = () => (
+    <div className="bg-white rounded-3xl shadow-sm border border-zinc-100 overflow-hidden animate-pulse">
+      <div className="h-16 bg-zinc-50 border-b border-zinc-100"></div>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="px-8 py-6 flex items-center justify-between border-b border-zinc-50">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-zinc-100"></div>
+            <div className="space-y-2">
+              <div className="h-4 bg-zinc-100 rounded w-32"></div>
+              <div className="h-2 bg-zinc-100 rounded w-16"></div>
+            </div>
+          </div>
+          <div className="h-4 bg-zinc-100 rounded w-24"></div>
+          <div className="h-8 bg-zinc-100 rounded-full w-20"></div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <main className="p-6 lg:p-15 w-full max-w-[1200px] mx-auto animate-fade-in">
@@ -61,12 +67,13 @@ export default function UserRiwayatPage() {
           <span className="material-symbols-outlined text-2xl">description</span>
           <div>
             <p className="text-[10px] uppercase font-bold tracking-widest opacity-60 leading-none">Total Laporan</p>
-            <p className="text-xl font-black leading-tight">{reports.length}</p>
+            <p className="text-xl font-black leading-tight">{loading ? "..." : reports.length}</p>
           </div>
         </div>
       </header>
 
-      <section className="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-zinc-100 overflow-hidden">
+      {loading ? <TableSkeleton /> : (
+        <section className="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-zinc-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
@@ -178,7 +185,7 @@ export default function UserRiwayatPage() {
              </div>
           </div>
         )}
-      </section>
+      )}
     </main>
   );
 }

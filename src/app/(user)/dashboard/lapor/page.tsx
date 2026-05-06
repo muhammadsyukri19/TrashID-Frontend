@@ -15,14 +15,15 @@ export default function LaporTPUPage() {
   const [message, setMessage] = useState<{type: "success" | "error", text: string} | null>(null);
   
   const [tpsList, setTpsList] = useState<any[]>([]);
+  const [loadingTps, setLoadingTps] = useState(true);
   const [selectedTpsId, setSelectedTpsId] = useState("");
   const [showMap, setShowMap] = useState(false);
   const [locationCoords, setLocationCoords] = useState<{lat: number, lng: number} | null>(null);
-  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     const fetchTps = async () => {
+      setLoadingTps(true);
       try {
         const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
         const res = await fetch(`${API_BASE}/tps`);
@@ -32,6 +33,8 @@ export default function LaporTPUPage() {
         }
       } catch (err) {
         console.error("Failed to fetch TPS list", err);
+      } finally {
+        setLoadingTps(false);
       }
     };
     fetchTps();
@@ -240,7 +243,7 @@ export default function LaporTPUPage() {
                 className="field-base appearance-none"
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%23154212' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px" }}
               >
-                <option value="">-- Pilih Lokasi TPS --</option>
+                <option value="">{loadingTps ? "Memuat daftar TPS..." : "-- Pilih Lokasi TPS --"}</option>
                 {tpsList.map((tps) => (
                   <option key={tps._id} value={tps._id}>{tps.nama_tps}</option>
                 ))}

@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Providers } from "@/components/Providers";
+import SplashScreen from "@/components/SplashScreen";
 
 export const metadata: Metadata = {
   title: "TrashID - Solusi Pemilahan Sampah Cerdas",
@@ -20,18 +11,13 @@ export const metadata: Metadata = {
   }
 };
 
-import { Providers } from "@/components/Providers";
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
       <head>
         <link rel="icon" href="/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -53,7 +39,8 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body className="min-h-full flex flex-col font-body">
+      <body className="min-h-full flex flex-col font-body bg-[#fcfdfa]">
+        <SplashScreen />
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -212,11 +212,12 @@ export default function PetaTPUPage() {
         </section>
 
         {/* Map Section */}
-        <section className="bg-white rounded-2xl shadow-[0_20px_40px_rgba(21,66,18,0.04)] border border-[#e2e2e2]/50 p-8">
-          <div className="relative w-full h-[500px]">
+        <section className="bg-white rounded-3xl shadow-[0_20px_40px_rgba(21,66,18,0.04)] border border-[#e2e2e2]/50 p-4">
+          <div className="relative w-full h-[600px] rounded-2xl overflow-hidden">
             {loading ? (
-              <div className="w-full h-full flex items-center justify-center bg-[#e2e2e2] rounded-xl">
-                <p className="text-[#154212] font-semibold">Memuat Data TPU...</p>
+              <div className="w-full h-full bg-[#f3f3f3] flex flex-col items-center justify-center gap-4 animate-pulse">
+                <div className="w-16 h-16 border-4 border-[#154212] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[#154212] font-bold tracking-tight animate-bounce">Menyinkronkan Lokasi TPS...</p>
               </div>
             ) : (
               <MapComponent markers={displayedMarkers} center={mapCenter} zoom={mapZoom} userLocation={userLocation} />

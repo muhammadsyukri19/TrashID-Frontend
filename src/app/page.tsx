@@ -77,6 +77,7 @@ export default function Home() {
                 src="/hero-illustration.png" 
                 alt="TrashID Revolution" 
                 fill
+                sizes="(max-width: 768px) 100vw, 500px"
                 className="object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
                 priority
               />
@@ -265,6 +266,7 @@ export default function Home() {
                   src="/tong-sampah.png" 
                   alt="Waste Education" 
                   fill 
+                  sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover opacity-80"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-green-950 via-transparent to-transparent"></div>
@@ -336,7 +338,13 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-8">
             {/* BIG HERO CARD */}
             <div className="lg:col-span-8 relative rounded-[48px] overflow-hidden group min-h-[400px]">
-              <Image src="/bg-leaf.jpg" alt="Impact" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+              <Image 
+                src="/bg-leaf.jpg" 
+                alt="Impact" 
+                fill 
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+              />
               <div className="absolute inset-0 bg-gradient-to-r from-green-950 via-green-950/60 to-transparent"></div>
               <div className="absolute inset-0 p-14 flex flex-col justify-center max-w-md space-y-4">
                 <div className="inline-block px-4 py-1 bg-green-500 text-white rounded-full text-xs font-bold tracking-wider">MISI KAMI</div>
