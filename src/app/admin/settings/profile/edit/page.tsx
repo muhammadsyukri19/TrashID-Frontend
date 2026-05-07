@@ -20,7 +20,7 @@ export default function UserProfileEditPage() {
     try {
       const token = localStorage.getItem("token");
       if (!token) return router.push("/login");
-      const res = await fetch("http://localhost:5001/api/users/profile", { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/users/profile", { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (res.ok) setProfile({ ...data, password: "" });
     } catch (e) {
@@ -43,11 +43,16 @@ export default function UserProfileEditPage() {
       if (password) formData.append("password", password);
       if (file) formData.append("profilePicture", file);
 
-      const res = await fetch("http://localhost:5001/api/users/profile", { method: "PATCH", headers: { Authorization: `Bearer ${token}` }, body: formData });
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/users/profile", { method: "PATCH", headers: { Authorization: `Bearer ${token}` }, body: formData });
       if (res.ok) {
+        const data = await res.json();
+        // Update local storage so sidebar/header reflects the new info
+        localStorage.setItem("user", JSON.stringify(data));
+        
         setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
-        const roles = localStorage.getItem("role");
-        const path = roles === "admin" ? "/admin/settings/profile" : "/admin/settings/profile";
+        
+        // Redirect to admin profile view
+        const path = "/admin/settings/profile";
         setTimeout(() => router.push(path), 1200);
       } else {
         const data = await res.json();
@@ -145,3 +150,6 @@ export default function UserProfileEditPage() {
     </div>
   );
 }
+
+
+

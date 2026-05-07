@@ -15,22 +15,26 @@ export default function LaporTPUPage() {
   const [message, setMessage] = useState<{type: "success" | "error", text: string} | null>(null);
   
   const [tpsList, setTpsList] = useState<any[]>([]);
+  const [loadingTps, setLoadingTps] = useState(true);
   const [selectedTpsId, setSelectedTpsId] = useState("");
   const [showMap, setShowMap] = useState(false);
   const [locationCoords, setLocationCoords] = useState<{lat: number, lng: number} | null>(null);
-  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     const fetchTps = async () => {
+      setLoadingTps(true);
       try {
-        const res = await fetch("http://localhost:5001/api/tps");
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+        const res = await fetch(`${API_BASE}/tps`);
         const json = await res.json();
         if (json.status === "success") {
           setTpsList(json.data);
         }
       } catch (err) {
         console.error("Failed to fetch TPS list", err);
+      } finally {
+        setLoadingTps(false);
       }
     };
     fetchTps();
@@ -93,11 +97,19 @@ export default function LaporTPUPage() {
       formData.append("lng", lng.toString());
       formData.append("deskripsi", deskripsi);
 
-      const response = await fetch("http://localhost:5001/api/tps/report", {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const response = await fetch(`${API_BASE}/tps/report`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData,
       });
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Non-JSON response received:", text.substring(0, 200));
+        throw new Error(`Server tidak merespon dengan format yang benar (Status: ${response.status}). Pastikan Backend sudah berjalan di port 5001.`);
+      }
 
       const data = await response.json();
       if (response.ok && data.status === "success") {
@@ -111,9 +123,9 @@ export default function LaporTPUPage() {
       } else {
         setMessage({ type: "error", text: data.message || "Gagal mengirim laporan." });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submit report error:", error);
-      setMessage({ type: "error", text: "Terjadi kesalahan pada server." });
+      setMessage({ type: "error", text: error.message || "Terjadi kesalahan pada server." });
     } finally {
       setIsLoading(false);
     }
@@ -196,7 +208,7 @@ export default function LaporTPUPage() {
                     Klik untuk Ambil atau Unggah Foto TPS
                   </h3>
                   <p className="text-sm text-[#9aaa96] mb-7 font-medium">
-                    Format .jpg atau .jpeg
+                    Format .jpg, .jpeg, atau .png
                   </p>
                 </>
               )}
@@ -231,7 +243,7 @@ export default function LaporTPUPage() {
                 className="field-base appearance-none"
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%23154212' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px" }}
               >
-                <option value="">-- Pilih Lokasi TPS --</option>
+                <option value="">{loadingTps ? "Memuat daftar TPS..." : "-- Pilih Lokasi TPS --"}</option>
                 {tpsList.map((tps) => (
                   <option key={tps._id} value={tps._id}>{tps.nama_tps}</option>
                 ))}
@@ -322,3 +334,4 @@ export default function LaporTPUPage() {
     </>
   );
 }
+

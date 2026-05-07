@@ -17,7 +17,7 @@ export default function UserProfileViewPage() {
       const token = localStorage.getItem("token");
       if (!token) return router.push("/login");
 
-      const res = await fetch("http://localhost:5001/api/users/profile", {
+      const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api") + "/users/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -87,3 +87,6 @@ export default function UserProfileViewPage() {
     </div>
   );
 }
+
+
+

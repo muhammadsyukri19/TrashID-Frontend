@@ -49,7 +49,8 @@ export default function PetaTPUPage() {
   useEffect(() => {
     const fetchTPSData = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/tps");
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+        const response = await fetch(`${API_BASE}/tps`);
         const json = await response.json();
         if (json.status === "success") {
           const tpsData = json.data.map((tps: any) => {
@@ -83,23 +84,38 @@ export default function PetaTPUPage() {
 
   // Filter markers based on selected city and search query
   const displayedMarkers = allMarkers.filter((marker) => {
-    const matchCity = selectedCity === "" || marker.address.toLowerCase().includes(selectedCity.toLowerCase());
-    const matchSearch = searchQuery === "" || marker.name.toLowerCase().includes(searchQuery.toLowerCase()) || marker.address.toLowerCase().includes(searchQuery.toLowerCase());
+    const cityLower = selectedCity.toLowerCase();
+    const nameLower = marker.name.toLowerCase();
+    const addressLower = marker.address.toLowerCase();
+    
+    // Match city if it's in the name OR address
+    const matchCity = selectedCity === "" || 
+                     nameLower.includes(cityLower) || 
+                     addressLower.includes(cityLower);
+                     
+    const matchSearch = searchQuery === "" || 
+                        nameLower.includes(searchQuery.toLowerCase()) || 
+                        addressLower.includes(searchQuery.toLowerCase());
+                        
     return matchCity && matchSearch;
   });
 
   // Handle City Change
+  const [mapZoom, setMapZoom] = useState(8);
+
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const city = e.target.value;
     setSelectedCity(city);
-    setUserLocation(null); // Reset user location view
+    setUserLocation(null); 
     
     if (city === "") {
       setMapCenter(DEFAULT_CENTER);
+      setMapZoom(8);
     } else {
       const foundCity = ACEH_CITIES.find(c => c.name === city);
       if (foundCity) {
         setMapCenter([foundCity.lat, foundCity.lng]);
+        setMapZoom(13); // Zoom in closer when a city is selected
       }
     }
   };
@@ -196,14 +212,15 @@ export default function PetaTPUPage() {
         </section>
 
         {/* Map Section */}
-        <section className="bg-white rounded-2xl shadow-[0_20px_40px_rgba(21,66,18,0.04)] border border-[#e2e2e2]/50 p-8">
-          <div className="relative w-full h-[500px]">
+        <section className="bg-white rounded-3xl shadow-[0_20px_40px_rgba(21,66,18,0.04)] border border-[#e2e2e2]/50 p-4">
+          <div className="relative w-full h-[600px] rounded-2xl overflow-hidden">
             {loading ? (
-              <div className="w-full h-full flex items-center justify-center bg-[#e2e2e2] rounded-xl">
-                <p className="text-[#154212] font-semibold">Memuat Data TPU...</p>
+              <div className="w-full h-full bg-[#f3f3f3] flex flex-col items-center justify-center gap-4 animate-pulse">
+                <div className="w-16 h-16 border-4 border-[#154212] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[#154212] font-bold tracking-tight animate-bounce">Menyinkronkan Lokasi TPS...</p>
               </div>
             ) : (
-              <MapComponent markers={displayedMarkers} center={mapCenter} userLocation={userLocation} />
+              <MapComponent markers={displayedMarkers} center={mapCenter} zoom={mapZoom} userLocation={userLocation} />
             )}
           </div>
         </section>
@@ -236,3 +253,4 @@ export default function PetaTPUPage() {
     </>
   );
 }
+

@@ -64,8 +64,10 @@ export default function UserDashboardPage() {
       return;
     }
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+
     // Fetch Profile
-    fetch("http://localhost:5001/api/users/profile", {
+    fetch(`${API_BASE}/users/profile`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -76,7 +78,7 @@ export default function UserDashboardPage() {
       .catch(() => setLoadingProfile(false));
 
     // Fetch User Reports
-    fetch("http://localhost:5001/api/tps/my-reports", {
+    fetch(`${API_BASE}/tps/my-reports`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -89,7 +91,7 @@ export default function UserDashboardPage() {
       .catch(() => setLoadingReports(false));
 
     // Fetch TPS
-    fetch("http://localhost:5001/api/tps")
+    fetch(`${API_BASE}/tps`)
       .then(res => res.json())
       .then(json => {
         if (json.status === "success") {
@@ -328,3 +330,4 @@ export default function UserDashboardPage() {
     </main>
   );
 }
+

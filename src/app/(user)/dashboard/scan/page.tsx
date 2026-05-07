@@ -38,7 +38,8 @@ export default function ScanTrashPage() {
       const formData = new FormData();
       formData.append("image", fileToUpload);
 
-      const response = await fetch("http://localhost:5001/api/classify", {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const response = await fetch(`${API_BASE}/classify`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -229,3 +230,5 @@ export default function ScanTrashPage() {
     </main>
   );
 }
+
+
