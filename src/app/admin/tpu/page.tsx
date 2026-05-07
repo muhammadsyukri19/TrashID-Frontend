@@ -138,7 +138,7 @@ export default function AdminTpuPage() {
           </p>
         </div>
 
-        <div className="hidden items-center gap-3 rounded-full bg-white px-3 py-2 shadow-sm md:flex border border-gray-100">
+        {/* <div className="hidden items-center gap-3 rounded-full bg-white px-3 py-2 shadow-sm md:flex border border-gray-100">
           <img
             src="https://ui-avatars.com/api/?name=Admin&background=154212&color=fff"
             alt="Admin"
@@ -148,7 +148,7 @@ export default function AdminTpuPage() {
             <p className="text-sm font-bold text-[#1a1c1c]">Admin System</p>
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-400">Dashboard</p>
           </div>
-        </div>
+        </div> */}
       </section>
 
       {/* Stats Cards */}
