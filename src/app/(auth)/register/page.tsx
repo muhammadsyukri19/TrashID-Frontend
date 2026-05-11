@@ -21,6 +21,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,14 +304,23 @@ export default function RegisterPage() {
                       lock
                     </span>
                     <input
-                      className="w-full pl-12 pr-4 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none"
+                      key={showPassword ? "text" : "password"}
+                      className="w-full pl-12 pr-12 py-4 bg-[#f3f3f3] border-none rounded-md focus:ring-2 focus:ring-[#154212] focus:bg-white transition-all placeholder:text-[#c2c9bb] outline-none font-medium"
                       id="password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                     />
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#72796e] cursor-pointer select-none hover:text-[#154212] transition-colors z-10"
+                    >
+                      {showPassword ? "visibility" : "visibility_off"}
+                    </button>
                   </div>
                 </div>
                 {/* Checkbox */}

@@ -30,20 +30,21 @@ export default function UserLayout({
 
   if (isInitializing) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-[#fcfdfa] flex flex-col items-center justify-center gap-6 animate-fade-in font-body">
-        <div className="relative">
-          <div className="w-24 h-24 bg-[#154212] rounded-[2rem] flex items-center justify-center shadow-2xl shadow-[#154212]/20 animate-pulse">
-            <Image src="/logo.png" alt="TrashID Logo" width={50} height={50} className="brightness-0 invert" />
+      <div className="fixed inset-0 z-[9999] bg-[#fcfdfa] flex flex-col items-center justify-center animate-fade-in">
+        <div className="flex flex-col items-center gap-6">
+          {/* Modern Minimal Loader */}
+          <div className="relative w-16 h-16">
+            <div className="absolute inset-0 border-4 border-[#154212]/10 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-t-[#154212] rounded-full animate-spin"></div>
           </div>
-          <div className="absolute -inset-4 border-2 border-[#154212]/10 rounded-[2.5rem] animate-ping"></div>
-        </div>
-        
-        <div className="flex flex-col items-center gap-2">
-          <h2 className="text-xl font-black text-[#154212] tracking-tight font-headline">TrashID</h2>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-[#154212] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-            <span className="w-1.5 h-1.5 bg-[#154212] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-            <span className="w-1.5 h-1.5 bg-[#154212] rounded-full animate-bounce"></span>
+          
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-sm font-bold text-[#154212] tracking-wider uppercase opacity-80">Memuat Data</p>
+            <div className="flex items-center gap-1">
+              <span className="w-1 h-1 bg-[#154212] rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+              <span className="w-1 h-1 bg-[#154212] rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+              <span className="w-1 h-1 bg-[#154212] rounded-full animate-bounce"></span>
+            </div>
           </div>
         </div>
       </div>

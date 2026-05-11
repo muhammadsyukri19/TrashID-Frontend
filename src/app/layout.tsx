@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import SplashScreen from "@/components/SplashScreen";
 
 export const metadata: Metadata = {
   title: "TrashID - Solusi Pemilahan Sampah Cerdas",
@@ -40,7 +39,6 @@ export default function RootLayout({
         `}</style>
       </head>
       <body className="min-h-full flex flex-col font-body bg-[#fcfdfa]">
-        <SplashScreen />
         <Providers>{children}</Providers>
       </body>
     </html>

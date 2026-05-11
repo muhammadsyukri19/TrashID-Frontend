@@ -2,15 +2,22 @@
 
 import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
+import SplashScreen from "@/components/SplashScreen";
 // Import API service if it exists, otherwise define a placeholder to prevent crashes
 // In this case, I'll assume it's in @/services/api as found in directory exploration
 import API from "@/services/api";
+import CameraModal from "@/components/modals/CameraModal";
+import ProcessingGuideModal from "@/components/modals/ProcessingGuideModal";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [guideType, setGuideType] = useState<"organik" | "anorganik" | "residu">("organik");
 
   const handleScan = async () => {
     if (!file) return alert("Upload gambar dulu");
@@ -20,13 +27,11 @@ export default function Home() {
 
     try {
       setLoading(true);
-      const res = await API.post("/scan", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setResult(res.data);
+      const res = await API.post("/classify/demo", formData);
+      setResult(res.data.data);
     } catch (err) {
       console.error(err);
-      alert("Scan gagal. Pastikan backend sudah berjalan.");
+      alert("Scan gagal. Pastikan backend & ML service sudah berjalan.");
     } finally {
       setLoading(false);
     }
@@ -34,6 +39,7 @@ export default function Home() {
 
   return (
     <main className="scroll-smooth bg-[#FDFDFD] font-body">
+      <SplashScreen />
       <Navbar />
       
       {/* ================= HERO ================= */}
@@ -104,19 +110,60 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-10 items-stretch">
             {/* UPLOAD CARD */}
             <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-2xl shadow-green-900/5 border border-gray-100 flex flex-col group transition-all duration-500 hover:shadow-green-900/10">
-              <div className="flex-1 border-2 border-dashed border-green-200 rounded-[32px] flex flex-col items-center justify-center p-8 transition-colors duration-300 group-hover:border-green-400 bg-green-50/30">
-                <div className="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                  <span className="material-symbols-outlined text-green-600 text-4xl">cloud_upload</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Unggah Foto Sampah</h3>
-                <p className="text-gray-500 text-center text-sm leading-relaxed max-w-[200px]">
-                  Drag & drop gambar atau klik untuk memilih file
-                </p>
-                <input
-                  type="file"
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                />
+              <div className="flex-1 border-2 border-dashed border-green-200 rounded-[32px] flex flex-col items-center justify-center p-8 transition-colors duration-300 group-hover:border-green-400 bg-green-50/30 relative overflow-hidden">
+                {file ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
+                    <div className="relative w-full h-48 rounded-2xl overflow-hidden">
+                      <Image 
+                        src={URL.createObjectURL(file)} 
+                        alt="Preview" 
+                        fill 
+                        className="object-contain"
+                      />
+                    </div>
+                    <p className="text-sm font-bold text-green-700 bg-green-100 px-3 py-1 rounded-full">
+                      {file.name}
+                    </p>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setFile(null); }}
+                      className="text-red-500 text-xs font-bold hover:underline"
+                    >
+                      Ganti Gambar
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center w-full h-full space-y-6">
+                    <div className="w-20 h-20 bg-green-100 rounded-3xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                      <span className="material-symbols-outlined text-green-600 text-4xl">cloud_upload</span>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full px-4">
+                      <button 
+                        onClick={() => setIsCameraOpen(true)}
+                        className="flex-1 w-full bg-green-600 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20"
+                      >
+                        <span className="material-symbols-outlined">photo_camera</span>
+                        Ambil Foto
+                      </button>
+                      
+                      <div className="relative flex-1 w-full">
+                        <button className="w-full bg-white border-2 border-green-600 text-green-600 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-green-50 transition-colors">
+                          <span className="material-symbols-outlined">attach_file</span>
+                          Pilih File
+                        </button>
+                        <input
+                          type="file"
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                          onChange={(e) => setFile(e.target.files?.[0] || null)}
+                        />
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-400 text-xs text-center px-8">
+                      Gunakan kamera langsung atau pilih dari penyimpanan lokal Anda
+                    </p>
+                  </div>
+                )}
               </div>
               
               <button 
@@ -147,7 +194,7 @@ export default function Home() {
                 <span className="text-[11px] font-bold tracking-[0.2em] text-gray-400 uppercase">Hasil Analisis AI</span>
                 <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                  98.4% Confidence
+                  {result ? `${((result as any).confidence * 100).toFixed(0)}% Akurasi` : "Menunggu Analisis"}
                 </div>
               </div>
 
@@ -165,10 +212,16 @@ export default function Home() {
 
                 <div className="flex-1 text-center md:text-left">
                   <h3 className="text-3xl font-headline font-extrabold text-gray-800 mb-2">
-                    {result ? (result as any).category : "Plastik PET"}
+                    {result ? (result as any).label : "Belum Ada Data"}
                   </h3>
-                  <div className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-sm font-semibold">
-                    Anorganik • Daur Ulang
+                  <div className={`inline-block px-3 py-1 rounded-lg text-sm font-semibold ${
+                    result 
+                    ? (result as any).label === 'Organik' ? 'bg-green-100 text-green-700' 
+                      : (result as any).label === 'Anorganik' ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-700'
+                    : 'bg-blue-50 text-blue-600'
+                  }`}>
+                    {result ? (result as any).label : "Silakan Scan"} • AI Classification
                   </div>
                 </div>
               </div>
@@ -181,17 +234,17 @@ export default function Home() {
                     Panduan Pengelolaan
                   </h4>
                   <p className="text-sm text-green-800/70 leading-relaxed italic">
-                    “Sampah ini sangat bernilai jika didaur ulang. Bersihkan dari sisa cairan, remas untuk menghemat ruang, dan kumpulkan di Bank Sampah terdekat.”
+                    {result ? (result as any).description : "“Sampah ini sangat bernilai jika didaur ulang. Bersihkan dari sisa cairan, remas untuk menghemat ruang, dan kumpulkan di Bank Sampah terdekat.”"}
                   </p>
                 </div>
 
-                <button
-                  disabled
-                  className="w-full group py-4 border-2 border-green-100 hover:border-green-600 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300"
+                <Link
+                  href="/login"
+                  className="w-full group py-4 border-2 border-green-100 hover:border-green-600 hover:bg-green-50 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300"
                 >
                   <span className="text-green-700 font-bold">Buka Laporan Lengkap</span>
-                  <span className="material-symbols-outlined text-green-600 transition-transform duration-300 group-hover:translate-x-1">lock</span>
-                </button>
+                  <span className="material-symbols-outlined text-green-600 transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+                </Link>
               </div>
             </div>
           </div>
@@ -214,9 +267,12 @@ export default function Home() {
 
               <div className="space-y-4">
                 {/* ORGANIK */}
-                <div className="p-6 rounded-3xl bg-green-50 border border-green-100 transition-all duration-300 hover:shadow-xl hover:shadow-green-900/5 cursor-pointer">
+                <div 
+                  onClick={() => { setGuideType("organik"); setIsGuideOpen(true); }}
+                  className="p-6 rounded-3xl bg-green-50 border border-green-100 transition-all duration-300 hover:shadow-xl hover:shadow-green-900/5 cursor-pointer group"
+                >
                   <div className="flex items-start gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center shrink-0 shadow-lg shadow-green-500/20 text-white">
+                    <div className="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center shrink-0 shadow-lg shadow-green-500/20 text-white group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-3xl">compost</span>
                     </div>
                     <div className="space-y-2">
@@ -232,9 +288,12 @@ export default function Home() {
                 </div>
 
                 {/* ANORGANIK */}
-                <div className="p-6 rounded-3xl bg-white border border-gray-100 transition-all duration-300 hover:shadow-xl hover:shadow-blue-900/5 cursor-pointer hover:border-blue-100 group">
+                <div 
+                  onClick={() => { setGuideType("anorganik"); setIsGuideOpen(true); }}
+                  className="p-6 rounded-3xl bg-blue-50 border border-blue-100 transition-all duration-300 hover:shadow-xl hover:shadow-blue-900/5 cursor-pointer group"
+                >
                   <div className="flex items-start gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 text-white transition-transform duration-300 group-hover:rotate-12">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 text-white group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-3xl">recycling</span>
                     </div>
                     <div className="space-y-2">
@@ -245,9 +304,12 @@ export default function Home() {
                 </div>
 
                 {/* RESIDU */}
-                <div className="p-6 rounded-3xl bg-white border border-gray-100 transition-all duration-300 hover:shadow-xl hover:shadow-gray-900/5 cursor-pointer hover:border-gray-200 group">
+                <div 
+                  onClick={() => { setGuideType("residu"); setIsGuideOpen(true); }}
+                  className="p-6 rounded-3xl bg-gray-50 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:shadow-gray-900/5 cursor-pointer group"
+                >
                   <div className="flex items-start gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center shrink-0 shadow-lg shadow-gray-800/20 text-white transition-transform duration-300 group-hover:rotate-12">
+                    <div className="w-14 h-14 rounded-2xl bg-gray-500 flex items-center justify-center shrink-0 shadow-lg shadow-gray-500/20 text-white group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-3xl">delete_sweep</span>
                     </div>
                     <div className="space-y-2">
@@ -414,7 +476,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2 space-y-6">
               <div className="flex items-center gap-3">
-                <Image src="/logo.png" alt="TrashID" width={40} height={40} />
+                <Image src="/logo.png" alt="TrashID" width={40} height={40} sizes="40px" />
                 <span className="text-2xl font-bold text-green-900">TrashID</span>
               </div>
               <p className="text-gray-500 max-w-sm leading-relaxed">
@@ -459,6 +521,17 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      <CameraModal 
+        isOpen={isCameraOpen} 
+        onClose={() => setIsCameraOpen(false)} 
+        onCapture={(capturedFile) => setFile(capturedFile)} 
+      />
+      <ProcessingGuideModal 
+        isOpen={isGuideOpen} 
+        onClose={() => setIsGuideOpen(false)} 
+        initialType={guideType} 
+      />
     </main>
   );
 }

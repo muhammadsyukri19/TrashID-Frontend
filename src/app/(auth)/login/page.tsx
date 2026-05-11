@@ -13,6 +13,7 @@ export default function LoginPage() {
   });
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -252,31 +253,48 @@ export default function LoginPage() {
                   </label>
                   <div className="relative">
                     <input
-                      className="w-full px-5 py-4 bg-[#f3f3f3] border-none rounded-md text-[#1a1c1c] placeholder:text-[#42493e]/40 transition-all font-medium"
+                      key={showPassword ? "text" : "password"}
+                      className="w-full pl-5 pr-12 py-4 bg-[#f3f3f3] border-none rounded-md text-[#1a1c1c] placeholder:text-[#42493e]/40 transition-all font-medium focus:ring-2 focus:ring-[#154212] outline-none"
                       id="password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       required
                     />
-                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#42493e]/60 cursor-pointer">
-                      visibility_off
-                    </span>
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#42493e]/60 cursor-pointer select-none hover:text-[#154212] transition-colors z-10"
+                    >
+                      {showPassword ? "visibility" : "visibility_off"}
+                    </button>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between py-2">
-                  <label className="flex items-center group cursor-pointer">
+                  <label htmlFor="rememberMe" className="flex items-center group cursor-pointer">
                     <div className="relative flex items-center">
-                      <input className="peer hidden" type="checkbox" />
-                      <div className="w-5 h-5 border-2 border-[#72796e] rounded-md peer-checked:bg-[#154212] peer-checked:border-[#154212] transition-all flex items-center justify-center">
-                        <span className="material-symbols-outlined text-white text-xs scale-0 peer-checked:scale-100 transition-transform">
-                          check
-                        </span>
+                      <input 
+                        id="rememberMe"
+                        name="rememberMe"
+                        className="peer hidden" 
+                        type="checkbox" 
+                      />
+                      <div className="w-5 h-5 border-2 border-[#72796e] rounded-md peer-checked:bg-[#154212] peer-checked:border-[#154212] transition-all flex items-center justify-center bg-white overflow-hidden">
+                        <svg 
+                          className="w-3.5 h-3.5 text-white scale-0 peer-checked:scale-100 transition-transform duration-200" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor" 
+                          strokeWidth="4"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
                       </div>
-                      <span className="ml-3 text-sm font-medium text-[#42493e] group-hover:text-[#1a1c1c]">
+                      <span className="ml-3 text-sm font-medium text-[#42493e] group-hover:text-[#154212] transition-colors">
                         Ingat saya
                       </span>
                     </div>
