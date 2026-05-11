@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import Link from "next/link";
 import CameraModal from "@/components/modals/CameraModal";
 import ProcessingGuideModal from "@/components/modals/ProcessingGuideModal";
+import ScanResultModal from "@/components/modals/ScanResultModal";
 
 export default function ScanTrashPage() {
   const [image, setImage] = useState<string | null>(null);
@@ -12,6 +13,7 @@ export default function ScanTrashPage() {
   const [result, setResult] = useState<any>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [guideType, setGuideType] = useState<"organik" | "anorganik" | "residu">("organik");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -78,6 +80,36 @@ export default function ScanTrashPage() {
     setImage(null);
     setImageFile(null);
     setResult(null);
+    setIsResultModalOpen(false);
+  };
+
+  const handleClaimXP = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${API_BASE}/users/xp`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ xp: 10 })
+      });
+
+      if (res.ok) {
+        alert("Selamat! Anda berhasil mengklaim 10 XP untuk kontribusi ini.");
+        setIsResultModalOpen(false);
+        // Bisa diredirect ke dashboard, atau reset scan
+        resetScan();
+      } else {
+        alert("Gagal mengklaim XP.");
+      }
+    } catch (err) {
+      console.error("Error claiming XP:", err);
+      alert("Terjadi kesalahan.");
+    }
   };
 
   return (
@@ -213,7 +245,10 @@ export default function ScanTrashPage() {
                     </span>
                   </div>
 
-                  <button className="w-full bg-[#154212] text-white py-4 rounded-xl font-bold hover:bg-[#2d5a27] transition-all">
+                  <button 
+                    onClick={() => setIsResultModalOpen(true)}
+                    className="w-full bg-[#154212] text-white py-4 rounded-xl font-bold hover:bg-[#2d5a27] transition-all"
+                  >
                     Konfirmasi & Klaim XP
                   </button>
                 </div>
@@ -265,6 +300,13 @@ export default function ScanTrashPage() {
         isOpen={isGuideOpen} 
         onClose={() => setIsGuideOpen(false)} 
         initialType={guideType} 
+      />
+      <ScanResultModal
+        isOpen={isResultModalOpen}
+        onClose={() => setIsResultModalOpen(false)}
+        onClaim={handleClaimXP}
+        image={image}
+        result={result}
       />
     </>
   );
