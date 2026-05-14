@@ -287,9 +287,9 @@ export default function AdminReportsPage() {
                   <td className="px-6 py-5 text-[11px] text-zinc-500">{new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
                   <td className="px-6 py-5">
                     <div className="flex justify-center gap-1 rounded-full border border-zinc-100 bg-white p-1 shadow-sm w-fit mx-auto">
-                      <button onClick={() => setSelectedImage(report.foto_url)} className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:bg-zinc-100 hover:text-[#154212] transition-all">
+                      <Link href={`/admin/reports/${report._id}`} className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:bg-zinc-100 hover:text-[#154212] transition-all">
                         <span className="material-symbols-outlined text-[18px]">visibility</span>
-                      </button>
+                      </Link>
                       <button 
                         onClick={() => setConfirmData({ id: report._id, status: 'verified' })} 
                         className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${report.status_laporan === 'verified' ? 'bg-[#e7f5e9] text-[#2f6e2f]' : 'text-zinc-400 hover:bg-[#e7f5e9] hover:text-[#2f6e2f]'}`}
