@@ -14,6 +14,15 @@ export default function AdminLayout({
   const [user, setUser] = useState<any>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
+  const refreshUser = () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      setUser(userData);
+    } catch (e) {
+      console.error("Error refreshing user:", e);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -31,7 +40,12 @@ export default function AdminLayout({
       const timer = setTimeout(() => {
         setIsInitializing(false);
       }, 800);
-      return () => clearTimeout(timer);
+
+      window.addEventListener("profileUpdated", refreshUser);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener("profileUpdated", refreshUser);
+      };
     } catch (e) {
       router.push("/login");
     }

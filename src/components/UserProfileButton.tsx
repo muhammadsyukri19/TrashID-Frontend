@@ -7,9 +7,15 @@ interface UserProfileButtonProps {
 }
 
 export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    }
+    return null;
+  });
 
-  useEffect(() => {
+  const fetchProfile = () => {
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
     const token = localStorage.getItem("token");
     if (token) {
@@ -17,9 +23,20 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
-        .then((data) => setProfile(data))
+        .then((data) => {
+          setProfile(data);
+          // Sync with localStorage
+          localStorage.setItem("user", JSON.stringify(data));
+        })
         .catch((err) => console.error("Error fetching profile:", err));
     }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+
+    window.addEventListener("profileUpdated", fetchProfile);
+    return () => window.removeEventListener("profileUpdated", fetchProfile);
   }, []);
 
   const handleClick = () => {

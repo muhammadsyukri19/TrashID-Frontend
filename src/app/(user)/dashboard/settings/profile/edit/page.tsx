@@ -49,6 +49,9 @@ export default function UserProfileEditPage() {
         // Update local storage so sidebar/header reflects the new info
         localStorage.setItem("user", JSON.stringify(data));
         
+        // Refresh profile UI instantly
+        window.dispatchEvent(new Event("profileUpdated"));
+        
         setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
         
         // Cek role dari data yang baru diupdate

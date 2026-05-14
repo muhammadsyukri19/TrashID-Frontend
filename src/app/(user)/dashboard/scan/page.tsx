@@ -100,6 +100,20 @@ export default function ScanTrashPage() {
 
       if (res.ok) {
         alert("Selamat! Anda berhasil mengklaim 10 XP untuk kontribusi ini.");
+        
+        // Refresh profile UI instantly
+        window.dispatchEvent(new Event("profileUpdated"));
+        
+        // Optional: Update local storage manually if we want to avoid extra fetch, 
+        // but UserProfileButton will fetch anyway. 
+        // To be safe, let's update local storage user object if it exists.
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          user.xp = (user.xp || 0) + 10;
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+        
         setIsResultModalOpen(false);
         // Bisa diredirect ke dashboard, atau reset scan
         resetScan();
