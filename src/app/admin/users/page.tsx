@@ -85,6 +85,61 @@ export default function AdminUsersPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isActionLoading, setIsActionLoading] = useState(false);
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setIsActionLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api"}/users/${selectedUser._id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setUsers(users.filter(u => u._id !== selectedUser._id));
+        setIsDeleteModalOpen(false);
+        // Refresh stats
+        fetchUsers();
+      } else {
+        alert("Gagal menghapus user");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleUpdateRole = async (newRole: string) => {
+    if (!selectedUser) return;
+    setIsActionLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api"}/users/${selectedUser._id}/role`, {
+        method: "PATCH",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) {
+        setUsers(users.map(u => u._id === selectedUser._id ? { ...u, role: newRole } : u));
+        setIsRoleModalOpen(false);
+      } else {
+        alert("Gagal memperbarui role");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8 font-body">
       <section className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -200,10 +255,18 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-5 py-4 text-center">
                     <div className="flex justify-center gap-2">
-                      <button className="p-1.5 text-zinc-400 hover:bg-gray-100 hover:text-blue-600 rounded-lg transition-colors tooltip-trigger" title="Ubah Role">
+                      <button 
+                        onClick={() => { setSelectedUser(user); setIsRoleModalOpen(true); }}
+                        className="p-1.5 text-zinc-400 hover:bg-gray-100 hover:text-blue-600 rounded-lg transition-colors tooltip-trigger" 
+                        title="Ubah Role"
+                      >
                         <span className="material-symbols-outlined text-[18px]">manage_accounts</span>
                       </button>
-                      <button className="p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors tooltip-trigger" title="Hapus Akun">
+                      <button 
+                        onClick={() => { setSelectedUser(user); setIsDeleteModalOpen(true); }}
+                        className="p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors tooltip-trigger" 
+                        title="Hapus Akun"
+                      >
                         <span className="material-symbols-outlined text-[18px]">delete</span>
                       </button>
                     </div>
@@ -216,6 +279,82 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-3xl">delete_forever</span>
+            </div>
+            <h3 className="text-xl font-bold text-center text-zinc-900 mb-2">Hapus Akun Pengguna?</h3>
+            <p className="text-sm text-zinc-500 text-center mb-8">
+              Tindakan ini tidak dapat dibatalkan. Akun <b>{selectedUser?.fullName || selectedUser?.username}</b> akan dihapus permanen dari sistem.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-3 px-4 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-colors"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={handleDeleteUser}
+                disabled={isActionLoading}
+                className="flex-1 py-3 px-4 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20 disabled:opacity-50"
+              >
+                {isActionLoading ? "Menghapus..." : "Ya, Hapus Akun"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Role Modal */}
+      {isRoleModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-3xl">manage_accounts</span>
+            </div>
+            <h3 className="text-xl font-bold text-center text-zinc-900 mb-2">Ubah Hak Akses</h3>
+            <p className="text-sm text-zinc-500 text-center mb-8">
+              Pilih role baru untuk <b>{selectedUser?.fullName || selectedUser?.username}</b>.
+            </p>
+            
+            <div className="space-y-3 mb-8">
+              <button 
+                onClick={() => handleUpdateRole("user")}
+                className={`w-full p-4 rounded-xl border-2 text-left flex items-center justify-between transition-all ${selectedUser?.role === 'user' ? 'border-[#154212] bg-[#f0f7ef]' : 'border-zinc-100 hover:border-zinc-200'}`}
+              >
+                <div>
+                  <p className="font-bold text-[#154212]">User Regular</p>
+                  <p className="text-xs text-zinc-500">Akses standar untuk lapor dan scan sampah.</p>
+                </div>
+                {selectedUser?.role === 'user' && <span className="material-symbols-outlined text-[#154212]">check_circle</span>}
+              </button>
+              
+              <button 
+                onClick={() => handleUpdateRole("admin")}
+                className={`w-full p-4 rounded-xl border-2 text-left flex items-center justify-between transition-all ${selectedUser?.role === 'admin' ? 'border-amber-500 bg-amber-50' : 'border-zinc-100 hover:border-zinc-200'}`}
+              >
+                <div>
+                  <p className="font-bold text-amber-700">Administrator</p>
+                  <p className="text-xs text-zinc-500">Akses penuh ke manajemen sistem dan data.</p>
+                </div>
+                {selectedUser?.role === 'admin' && <span className="material-symbols-outlined text-amber-500">check_circle</span>}
+              </button>
+            </div>
+
+            <button 
+              onClick={() => setIsRoleModalOpen(false)}
+              className="w-full py-3 px-4 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-colors"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
         
         <div className="flex flex-col gap-3 border-t border-[#eee9df] px-5 py-4 text-sm text-zinc-500 lg:flex-row lg:items-center lg:justify-between">
           <p>
