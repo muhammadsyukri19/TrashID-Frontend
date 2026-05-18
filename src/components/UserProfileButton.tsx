@@ -72,7 +72,7 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
   return (
     <button
       onClick={handleClick}
-      className="group inline-flex items-center gap-3 bg-white hover:bg-[#f4fef0] border border-zinc-200 hover:border-[#5ccf3c] rounded-full py-2 pl-2 pr-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] shadow-sm"
+      className="group inline-flex items-center gap-3 bg-white hover:bg-[#f4fef0] border border-zinc-200 hover:border-[#5ccf3c] rounded-full py-2 pl-2 pr-2 sm:pr-5 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] shadow-sm"
     >
       {/* Avatar */}
       <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#bcf0ae] flex-shrink-0">
@@ -84,7 +84,7 @@ export default function UserProfileButton({ onClick }: UserProfileButtonProps) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-1">
+      <div className="hidden sm:flex flex-col gap-1 text-left">
         <span className="text-[13px] font-bold text-[#154212] leading-tight tracking-wide">
           {profile?.username || "User"}
         </span>
