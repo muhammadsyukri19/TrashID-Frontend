@@ -558,7 +558,7 @@ export default function LaporTPUPage() {
                   {/* Guide overlay */}
                   <div className="absolute inset-6 border-2 border-dashed border-white/30 rounded-2xl pointer-events-none flex items-center justify-center">
                     <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold bg-black/40 px-3 py-1.5 rounded-full">
-                      Posisikan Sampah di Sini
+                      Ambil gambar kondisi tumpukan sampah
                     </span>
                   </div>
                 </>
