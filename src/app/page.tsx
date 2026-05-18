@@ -19,29 +19,47 @@ export default function Home() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [guideType, setGuideType] = useState<"organik" | "anorganik" | "residu">("organik");
 
-  // Intersection Observer for scroll-triggered animation
+  // Intersection Observer for scroll-triggered animations in multiple sections
   const eduRef = useRef<HTMLDivElement>(null);
+  const fiturRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
   const [isEduVisible, setIsEduVisible] = useState(false);
+  const [isFiturVisible, setIsFiturVisible] = useState(false);
+  const [isAboutVisible, setIsAboutVisible] = useState(false);
+  const [isCtaVisible, setIsCtaVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
+    const observerOptions = { threshold: 0.15 };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setIsEduVisible(true);
-          observer.unobserve(entry.target);
+          if (entry.target === eduRef.current) {
+            setIsEduVisible(true);
+            observer.unobserve(entry.target);
+          } else if (entry.target === fiturRef.current) {
+            setIsFiturVisible(true);
+            observer.unobserve(entry.target);
+          } else if (entry.target === aboutRef.current) {
+            setIsAboutVisible(true);
+            observer.unobserve(entry.target);
+          } else if (entry.target === ctaRef.current) {
+            setIsCtaVisible(true);
+            observer.unobserve(entry.target);
+          }
         }
-      },
-      { threshold: 0.15 }
-    );
+      });
+    }, observerOptions);
 
-    if (eduRef.current) {
-      observer.observe(eduRef.current);
-    }
+    if (eduRef.current) observer.observe(eduRef.current);
+    if (fiturRef.current) observer.observe(fiturRef.current);
+    if (aboutRef.current) observer.observe(aboutRef.current);
+    if (ctaRef.current) observer.observe(ctaRef.current);
 
     return () => {
-      if (eduRef.current) {
-        observer.unobserve(eduRef.current);
-      }
+      observer.disconnect();
     };
   }, []);
 
@@ -385,10 +403,13 @@ export default function Home() {
       {/* ================= FITUR ================= */}
       <section 
         id="fitur"
-        className="py-24 md:py-32 bg-[#F8FAFB]"
+        className="py-24 md:py-32 bg-[#F8FAFB] overflow-hidden"
+        ref={fiturRef}
       >
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
+          <div className={`text-center mb-20 transform transition-all duration-1000 ease-out ${
+            isFiturVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}>
             <h2 className="text-3xl md:text-5xl font-headline font-bold text-green-950 mb-6">
               Ekosistem <span className="text-green-600">TrashID</span>
             </h2>
@@ -403,22 +424,31 @@ export default function Home() {
                 img: "/feature-scan.png",
                 title: "Scan Sampah AI",
                 desc: "Identifikasi jenis material sampah secara instan hanya dengan satu foto. Akurasi tinggi berbasis deep learning.",
-                color: "bg-green-500"
+                color: "bg-green-500",
+                delay: "200ms"
               },
               {
                 img: "/feature-education.png",
                 title: "Edukasi Interaktif",
                 desc: "Pelajari cara mengolah sampah organik jadi kompos atau mendaur ulang barang bekas dengan panduan lengkap.",
-                color: "bg-blue-500"
+                color: "bg-blue-500",
+                delay: "400ms"
               },
               {
                 img: "/feature-map.png",
                 title: "Peta Bank Sampah",
                 desc: "Temukan lokasi Bank Sampah dan TPS terdekat untuk membuang sampah yang sudah Anda pilah dengan benar.",
-                color: "bg-orange-500"
+                color: "bg-orange-500",
+                delay: "600ms"
               }
             ].map((item, i) => (
-              <div key={i} className="bg-white p-10 rounded-[40px] shadow-xl shadow-green-900/5 border border-gray-100 flex flex-col items-center text-center group transition-all duration-500 hover:-translate-y-2">
+              <div 
+                key={i} 
+                className={`bg-white p-10 rounded-[40px] shadow-xl shadow-green-900/5 border border-gray-100 flex flex-col items-center text-center group transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) hover:-translate-y-2 ${
+                  isFiturVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"
+                }`}
+                style={{ transitionDelay: item.delay }}
+              >
                 <div className="relative mb-8 p-4">
                   <div className={`absolute inset-0 ${item.color} opacity-10 blur-2xl rounded-full scale-150`}></div>
                   <img src={item.img} alt={item.title} className="w-40 h-40 object-contain relative z-10 transition-transform duration-500 group-hover:scale-110" />
@@ -434,12 +464,16 @@ export default function Home() {
       {/* ================= ABOUT & IMPACT ================= */}
       <section 
         id="tentang"
-        className="py-24 md:py-32 bg-white"
+        className="py-24 md:py-32 bg-white overflow-hidden"
+        ref={aboutRef}
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-8">
             {/* BIG HERO CARD */}
-            <div className="lg:col-span-8 relative rounded-[48px] overflow-hidden group min-h-[400px]">
+            <div className={`lg:col-span-8 relative rounded-[48px] overflow-hidden group min-h-[400px] transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${
+              isAboutVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"
+            }`}
+            style={{ transitionDelay: "200ms" }}>
               <Image 
                 src="/bg-leaf.jpg" 
                 alt="Impact" 
@@ -463,7 +497,10 @@ export default function Home() {
             </div>
 
             {/* IMPACT CARD */}
-            <div className="lg:col-span-4 bg-green-900 rounded-[48px] p-12 flex flex-col justify-center items-center text-center text-white space-y-6 shadow-2xl shadow-green-900/20">
+            <div className={`lg:col-span-4 bg-green-900 rounded-[48px] p-12 flex flex-col justify-center items-center text-center text-white space-y-6 shadow-2xl shadow-green-900/20 transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${
+              isAboutVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"
+            }`}
+            style={{ transitionDelay: "500ms" }}>
               <span className="material-symbols-outlined text-6xl text-green-400">eco</span>
               <div className="space-y-2">
                 <p className="text-green-300 font-bold tracking-widest text-xs">TOTAL DAMPAK</p>
@@ -487,9 +524,11 @@ export default function Home() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white overflow-hidden" ref={ctaRef}>
         <div className="max-w-5xl mx-auto px-6">
-          <div className="relative rounded-[56px] bg-green-950 p-12 md:p-24 overflow-hidden text-center shadow-3xl shadow-green-900/40">
+          <div className={`relative rounded-[56px] bg-green-950 p-12 md:p-24 overflow-hidden text-center shadow-3xl shadow-green-900/40 transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${
+            isCtaVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-8"
+          }`}>
             <div className="absolute top-0 left-0 w-full h-full bg-[url('/globe.svg')] opacity-5 bg-center bg-no-repeat scale-150"></div>
             <div className="relative z-10 space-y-8">
               <h2 className="text-4xl md:text-6xl font-headline font-bold text-white leading-tight">
