@@ -3,7 +3,7 @@
 import Navbar from "@/components/navbar/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import SplashScreen from "@/components/SplashScreen";
 // Import API service if it exists, otherwise define a placeholder to prevent crashes
 // In this case, I'll assume it's in @/services/api as found in directory exploration
@@ -18,6 +18,32 @@ export default function Home() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [guideType, setGuideType] = useState<"organik" | "anorganik" | "residu">("organik");
+
+  // Intersection Observer for scroll-triggered animation
+  const eduRef = useRef<HTMLDivElement>(null);
+  const [isEduVisible, setIsEduVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsEduVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (eduRef.current) {
+      observer.observe(eduRef.current);
+    }
+
+    return () => {
+      if (eduRef.current) {
+        observer.unobserve(eduRef.current);
+      }
+    };
+  }, []);
 
   const handleScan = async () => {
     if (!file) return alert("Upload gambar dulu");
@@ -252,11 +278,13 @@ export default function Home() {
       </section>
 
       {/* ================= EDUKASI ================= */}
-      <section className="py-24 md:py-32 bg-white relative">
+      <section className="py-24 md:py-32 bg-white relative overflow-hidden" ref={eduRef}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
-              <div className="space-y-4">
+              <div className={`space-y-4 transform transition-all duration-1000 ease-out ${
+                isEduVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}>
                 <h2 className="text-4xl md:text-5xl font-headline font-bold text-green-950 leading-tight">
                   Kenali Jenis <br /><span className="text-green-500 text-6xl md:text-7xl">Sampahmu</span>
                 </h2>
@@ -269,7 +297,10 @@ export default function Home() {
                 {/* ORGANIK */}
                 <div 
                   onClick={() => { setGuideType("organik"); setIsGuideOpen(true); }}
-                  className="p-6 rounded-3xl bg-green-50 border border-green-100 transition-all duration-300 hover:shadow-xl hover:shadow-green-900/5 cursor-pointer group"
+                  className={`p-6 rounded-3xl bg-green-50 border border-green-100 cursor-pointer group transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) hover:shadow-xl hover:shadow-green-900/5 ${
+                    isEduVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+                  }`}
+                  style={{ transitionDelay: "200ms" }}
                 >
                   <div className="flex items-start gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center shrink-0 shadow-lg shadow-green-500/20 text-white group-hover:scale-110 transition-transform">
@@ -290,7 +321,10 @@ export default function Home() {
                 {/* ANORGANIK */}
                 <div 
                   onClick={() => { setGuideType("anorganik"); setIsGuideOpen(true); }}
-                  className="p-6 rounded-3xl bg-blue-50 border border-blue-100 transition-all duration-300 hover:shadow-xl hover:shadow-blue-900/5 cursor-pointer group"
+                  className={`p-6 rounded-3xl bg-blue-50 border border-blue-100 cursor-pointer group transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) hover:shadow-xl hover:shadow-blue-900/5 ${
+                    isEduVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+                  }`}
+                  style={{ transitionDelay: "400ms" }}
                 >
                   <div className="flex items-start gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 text-white group-hover:scale-110 transition-transform">
@@ -306,7 +340,10 @@ export default function Home() {
                 {/* RESIDU */}
                 <div 
                   onClick={() => { setGuideType("residu"); setIsGuideOpen(true); }}
-                  className="p-6 rounded-3xl bg-gray-50 border border-gray-100 transition-all duration-300 hover:shadow-xl hover:shadow-gray-900/5 cursor-pointer group"
+                  className={`p-6 rounded-3xl bg-gray-50 border border-gray-100 cursor-pointer group transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) hover:shadow-xl hover:shadow-gray-900/5 ${
+                    isEduVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+                  }`}
+                  style={{ transitionDelay: "600ms" }}
                 >
                   <div className="flex items-start gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-gray-500 flex items-center justify-center shrink-0 shadow-lg shadow-gray-500/20 text-white group-hover:scale-110 transition-transform">
@@ -321,7 +358,10 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className={`relative transform transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1) ${
+              isEduVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"
+            }`}
+            style={{ transitionDelay: "800ms" }}>
               <div className="absolute -inset-4 bg-green-500/10 blur-[100px] rounded-full"></div>
               <div className="relative bg-green-900 rounded-[50px] overflow-hidden aspect-[4/5] shadow-2xl transition-transform duration-700 hover:scale-[1.02]">
                 <Image 
