@@ -152,7 +152,7 @@ export default function LaporTPUPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) {
-      setMessage({ type: "error", text: "Silakan pilih foto kondisi TPU." });
+      setMessage({ type: "error", text: "Silakan pilih foto kondisi TPS." });
       return;
     }
     if (!selectedTpsId || !kondisi) {
@@ -465,7 +465,7 @@ export default function LaporTPUPage() {
             {/* Kondisi */}
             <div className="space-y-1.5">
               <label className="block font-headline text-sm font-bold text-[#2a2c2a]" htmlFor="kondisi">
-                Kondisi TPU (0-100)
+                Kondisi TPS (0-100)
               </label>
               <input
                 type="text"

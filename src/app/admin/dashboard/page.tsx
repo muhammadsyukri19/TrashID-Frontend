@@ -111,7 +111,7 @@ export default function AdminDashboardPage() {
             Halo, Admin!
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-            Ringkasan operasional harian untuk memantau laporan, TPU, dan tindak lanjut dengan cepat.
+            Ringkasan operasional harian untuk memantau laporan, TPS, dan tindak lanjut dengan cepat.
           </p>
         </div>
       </section>
@@ -198,7 +198,7 @@ export default function AdminDashboardPage() {
               <span className="text-sm text-white/60">Total Pengguna</span>
             </div>
             <p className="mt-4 text-xs leading-relaxed text-white/60 italic">
-              Pertumbuhan pengguna meningkat seiring dengan perluasan cakupan TPU di wilayah Anda.
+              Pertumbuhan pengguna meningkat seiring dengan perluasan cakupan TPS di wilayah Anda.
             </p>
           </div>
         </div>

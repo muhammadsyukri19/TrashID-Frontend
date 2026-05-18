@@ -145,7 +145,7 @@ export default function UserDashboardPage() {
           </div>
         </div>
 
-        {/* Laporkan TPU Card */}
+        {/* Laporkan TPS Card */}
         <div className="relative overflow-hidden bg-gradient-to-br from-[#154212] to-[#214d20] rounded-2xl group p-7 flex flex-col justify-between h-52 shadow-lg border border-[#154212]">
           <div className="relative z-10 max-w-[55%] text-white">
             <h3 className="text-xl font-bold text-[#94f990] mb-2">

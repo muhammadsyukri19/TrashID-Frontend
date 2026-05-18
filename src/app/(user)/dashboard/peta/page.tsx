@@ -195,10 +195,10 @@ export default function PetaTPUPage() {
         {/* Header */}
         <header className="mb-10">
           <h2 className="text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
-            Peta TPU Provinsi Aceh
+            Peta TPS Provinsi Aceh
           </h2>
           <p className="text-[#42493e] font-medium text-lg">
-            Pantau ketersediaan dan lokasi TPU di seluruh wilayah Aceh.
+            Pantau ketersediaan dan lokasi TPS di seluruh wilayah Aceh.
           </p>
         </header>
 
@@ -207,7 +207,7 @@ export default function PetaTPUPage() {
           <div className="w-full md:max-w-md">
             <input
               type="text"
-              placeholder="Cari nama TPU atau alamat..."
+              placeholder="Cari nama TPS atau alamat..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-5 py-4 bg-[#f3f3f3] border-2 border-transparent focus:border-[#154212] focus:bg-white rounded-xl outline-none transition-all text-[#1a1c1c] font-medium placeholder:text-[#72796e]"

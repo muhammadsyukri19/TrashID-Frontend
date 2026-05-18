@@ -33,7 +33,7 @@ export default function AdminReportsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Semua Status");
-  const [tpsFilter, setTpsFilter] = useState("Semua TPU");
+  const [tpsFilter, setTpsFilter] = useState("Semua TPS");
   const [dateFilter, setDateFilter] = useState("Semua Waktu");
   
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -62,7 +62,7 @@ export default function AdminReportsPage() {
       const queryParams = new URLSearchParams();
       if (searchTerm) queryParams.append("search", searchTerm);
       if (statusFilter !== "Semua Status") queryParams.append("status", statusFilter === "Terverifikasi" ? "verified" : statusFilter === "Menunggu" ? "pending" : "rejected");
-      if (tpsFilter !== "Semua TPU") queryParams.append("tpu", tpsFilter);
+      if (tpsFilter !== "Semua TPS") queryParams.append("tpu", tpsFilter);
       if (dateFilter !== "Semua Waktu") queryParams.append("dateRange", "7days");
 
       const res = await fetch(`${API_BASE}/admin/reports?${queryParams.toString()}`, {
@@ -131,7 +131,7 @@ export default function AdminReportsPage() {
 
   const handleExportCSV = () => {
     if (reports.length === 0) return alert("Tidak ada data untuk diekspor");
-    const headers = ["ID Laporan", "TPU", "Pelapor", "Status", "Waktu Lapor", "Deskripsi"];
+    const headers = ["ID Laporan", "TPS", "Pelapor", "Status", "Waktu Lapor", "Deskripsi"];
     const csvData = reports.map(r => [
       r._id,
       r.tps_id?.nama_tps || "N/A",
@@ -261,7 +261,7 @@ export default function AdminReportsPage() {
             <thead className="bg-[#f9fbf8] text-[10px] font-bold uppercase tracking-widest text-[#7b9270] border-b border-[#eee9df]">
               <tr>
                 <th className="px-6 py-4">Laporan</th>
-                <th className="px-6 py-4">TPU</th>
+                <th className="px-6 py-4">TPS</th>
                 <th className="px-6 py-4">Pelapor</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Waktu</th>

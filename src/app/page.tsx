@@ -575,7 +575,7 @@ export default function Home() {
               <ul className="space-y-4 text-sm text-gray-500">
                 <li><a href="#" className="hover:text-green-600 transition-colors">Scan Sampah AI</a></li>
                 <li><a href="#" className="hover:text-green-600 transition-colors">Edukasi Waste</a></li>
-                <li><a href="#" className="hover:text-green-600 transition-colors">Peta TPS/TPU</a></li>
+                <li><a href="#" className="hover:text-green-600 transition-colors">Peta TPS</a></li>
                 <li><a href="#" className="hover:text-green-600 transition-colors">Laporan Sampah</a></li>
               </ul>
             </div>
