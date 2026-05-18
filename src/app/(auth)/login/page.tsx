@@ -41,6 +41,7 @@ export default function LoginPage() {
       // Simpan token & info user
       localStorage.setItem("token", data.data.token);
       localStorage.setItem("user", JSON.stringify(data.data.user));
+      localStorage.setItem("lastActivity", Date.now().toString());
 
       // REDIRECT BERDASARKAN ROLE
       if (data.data.user.role === "admin") {
@@ -96,6 +97,7 @@ export default function LoginPage() {
 
         localStorage.setItem("token", data.data.token);
         localStorage.setItem("user", JSON.stringify(data.data.user));
+        localStorage.setItem("lastActivity", Date.now().toString());
 
         if (data.data.user.role === "admin") {
           router.push("/admin/dashboard");

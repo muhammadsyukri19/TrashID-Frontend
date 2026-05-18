@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Link from "next/link";
+import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
 
 export default function AdminLayout({
   children,
@@ -13,6 +14,9 @@ export default function AdminLayout({
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+
+  // Enable inactivity timeout check and tracking
+  useInactivityTimeout();
 
   const refreshUser = () => {
     try {

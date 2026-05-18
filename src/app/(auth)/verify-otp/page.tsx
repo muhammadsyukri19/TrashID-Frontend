@@ -72,7 +72,10 @@ function VerifyOTPContent() {
         if (!res.ok) throw new Error(data.message || "Verifikasi gagal");
 
         const token = data.data?.token;
-        if (token && typeof window !== "undefined") localStorage.setItem("token", token);
+        if (token && typeof window !== "undefined") {
+          localStorage.setItem("token", token);
+          localStorage.setItem("lastActivity", Date.now().toString());
+        }
         router.push("/dashboard");
       }
     } catch (err: any) {

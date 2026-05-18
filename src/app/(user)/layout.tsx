@@ -5,6 +5,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import UserProfileButton from "@/components/UserProfileButton";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useInactivityTimeout } from "@/hooks/useInactivityTimeout";
 
 export default function UserLayout({
   children,
@@ -13,6 +14,9 @@ export default function UserLayout({
 }) {
   const router = useRouter();
   const [isInitializing, setIsInitializing] = useState(true);
+
+  // Enable inactivity timeout check and tracking
+  useInactivityTimeout();
 
   useEffect(() => {
     // Mengecek apakah token ada di localStorage
