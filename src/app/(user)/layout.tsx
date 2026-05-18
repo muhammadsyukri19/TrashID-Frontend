@@ -59,8 +59,8 @@ export default function UserLayout({
     <div className="bg-[#f9f9f9] min-h-screen text-[#1a1c1c] font-body flex selection:bg-[#91f78e] relative">
       <Sidebar role="user" />
 
-      {/* Profile Button - Positioned absolutely in top right */}
-      <div className="absolute top-15 right-15 z-50">
+      {/* Profile Button - Positioned securely in top right */}
+      <div className="fixed top-4 right-4 md:top-6 md:right-8 z-50">
         <UserProfileButton />
       </div>
 
