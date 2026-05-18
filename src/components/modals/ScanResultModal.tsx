@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface ScanResultModalProps {
   isOpen: boolean;
@@ -17,6 +17,17 @@ interface ScanResultModalProps {
 
 export default function ScanResultModal({ isOpen, onClose, onClaim, image, result }: ScanResultModalProps) {
   const [isClaiming, setIsClaiming] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   if (!isOpen || !result) return null;
 

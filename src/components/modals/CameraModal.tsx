@@ -35,6 +35,7 @@ export default function CameraModal({ isOpen, onClose, onCapture }: CameraModalP
 
     if (isOpen) {
       startCamera();
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
@@ -42,6 +43,7 @@ export default function CameraModal({ isOpen, onClose, onCapture }: CameraModalP
         stream.getTracks().forEach(track => track.stop());
       }
       setIsStreamReady(false);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 

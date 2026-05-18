@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ProcessingGuideModalProps {
   isOpen: boolean;
@@ -10,6 +10,17 @@ interface ProcessingGuideModalProps {
 
 export default function ProcessingGuideModal({ isOpen, onClose, initialType = "organik" }: ProcessingGuideModalProps) {
   const [activeTab, setActiveTab] = useState(initialType);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -94,52 +105,52 @@ export default function ProcessingGuideModal({ isOpen, onClose, initialType = "o
   const current = content[activeTab];
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6 bg-green-950/40 backdrop-blur-md">
-      <div className="bg-white w-full max-w-3xl rounded-[40px] overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-500">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-green-950/40 backdrop-blur-md">
+      <div className="bg-white w-full max-w-3xl rounded-[32px] overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-500">
         {/* Header Tabs */}
-        <div className="flex p-2 bg-gray-100/50 m-6 rounded-2xl">
+        <div className="flex p-1.5 bg-gray-100/50 m-4 rounded-xl">
           {(['organik', 'anorganik', 'residu'] as const).map((type) => (
             <button
               key={type}
               onClick={() => setActiveTab(type)}
-              className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 capitalize flex items-center justify-center gap-2 ${
+              className={`flex-1 py-2 px-3 rounded-lg font-bold text-sm transition-all duration-300 capitalize flex items-center justify-center gap-2 ${
                 activeTab === type 
-                ? `${content[type].color} text-white shadow-lg` 
+                ? `${content[type].color} text-white shadow-md` 
                 : 'text-gray-500 hover:bg-gray-200'
               }`}
             >
-              <span className="material-symbols-outlined text-lg">{content[type].icon}</span>
+              <span className="material-symbols-outlined text-base">{content[type].icon}</span>
               {type}
             </button>
           ))}
         </div>
 
-        <div className="px-8 pb-10 space-y-8">
+        <div className="px-6 pb-6 space-y-6">
           {/* Main Info */}
-          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-            <div className={`w-24 h-24 rounded-[32px] ${current.color} flex items-center justify-center shrink-0 shadow-xl shadow-current/20`}>
-              <span className="material-symbols-outlined text-5xl text-white">{current.icon}</span>
+          <div className="flex flex-col md:flex-row gap-5 items-center md:items-start text-center md:text-left">
+            <div className={`w-16 h-16 rounded-[24px] ${current.color} flex items-center justify-center shrink-0 shadow-lg shadow-current/20`}>
+              <span className="material-symbols-outlined text-4xl text-white">{current.icon}</span>
             </div>
-            <div className="space-y-3">
-              <h2 className={`text-3xl font-headline font-bold ${current.textColor}`}>{current.title}</h2>
-              <p className="text-gray-500 leading-relaxed max-w-xl">
+            <div className="space-y-2">
+              <h2 className={`text-2xl font-headline font-bold ${current.textColor}`}>{current.title}</h2>
+              <p className="text-sm text-gray-500 leading-relaxed max-w-xl">
                 {current.description}
               </p>
             </div>
           </div>
 
           {/* Steps Grid */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-4">
             {current.steps.map((step, idx) => (
               <div 
                 key={idx} 
-                className={`${current.bgColor} p-6 rounded-[28px] border border-transparent hover:border-current/20 transition-all duration-300 group`}
+                className={`${current.bgColor} p-4 rounded-[20px] border border-transparent hover:border-current/20 transition-all duration-300 group`}
               >
-                <div className={`w-12 h-12 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform`}>
-                  <span className={`material-symbols-outlined ${current.textColor}`}>{step.icon}</span>
+                <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform`}>
+                  <span className={`material-symbols-outlined text-lg ${current.textColor}`}>{step.icon}</span>
                 </div>
-                <h5 className={`font-bold ${current.textColor} mb-2`}>{step.title}</h5>
-                <p className="text-xs text-gray-500 leading-relaxed">
+                <h5 className={`font-bold text-sm ${current.textColor} mb-1`}>{step.title}</h5>
+                <p className="text-[11px] text-gray-500 leading-relaxed">
                   {step.desc}
                 </p>
               </div>
@@ -147,10 +158,10 @@ export default function ProcessingGuideModal({ isOpen, onClose, initialType = "o
           </div>
 
           {/* Footer Button */}
-          <div className="pt-4 flex justify-center">
+          <div className="pt-2 flex justify-center">
             <button 
               onClick={onClose}
-              className="bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-xl shadow-gray-900/20"
+              className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-900/20"
             >
               Mengerti, Terima Kasih
             </button>
