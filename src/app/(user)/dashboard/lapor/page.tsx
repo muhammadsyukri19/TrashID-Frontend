@@ -27,6 +27,22 @@ export default function LaporTPUPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  // Searchable dropdown states and refs
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Searchable dropdown close-on-click-outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // Fetch initial geolocation and watch for active camera cleanup
   React.useEffect(() => {
     detectLocation();
@@ -201,6 +217,7 @@ export default function LaporTPUPage() {
         setFile(null);
         setPreview(null);
         setSelectedTpsId("");
+        setSearchQuery("");
         setKondisi("");
         setDeskripsi("");
         setLocationCoords(null);
@@ -214,6 +231,10 @@ export default function LaporTPUPage() {
       setIsLoading(false);
     }
   };
+
+  const filteredTpsList = tpsList.filter((tps) =>
+    tps.nama_tps.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -317,23 +338,92 @@ export default function LaporTPUPage() {
               </div>
             </div>
 
-            {/* Pilih TPS */}
-            <div className="space-y-1.5">
-              <label className="block font-headline text-sm font-bold text-[#2a2c2a]" htmlFor="tps_select">
+            {/* Pilih TPS (Searchable Dropdown) */}
+            <div className="space-y-1.5 relative" ref={dropdownRef}>
+              <label className="block font-headline text-sm font-bold text-[#2a2c2a]" htmlFor="tps_search">
                 Pilih TPS yang Dilaporkan
               </label>
-              <select
-                id="tps_select"
-                value={selectedTpsId}
-                onChange={(e) => setSelectedTpsId(e.target.value)}
-                className="field-base appearance-none"
-                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%23154212' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px" }}
-              >
-                <option value="">{loadingTps ? "Memuat daftar TPS..." : "-- Pilih Lokasi TPS --"}</option>
-                {tpsList.map((tps) => (
-                  <option key={tps._id} value={tps._id}>{tps.nama_tps}</option>
-                ))}
-              </select>
+              
+              <div className="relative">
+                <input
+                  type="text"
+                  id="tps_search"
+                  placeholder={loadingTps ? "Memuat daftar TPS..." : "Cari nama TPS di sini..."}
+                  disabled={loadingTps}
+                  value={searchQuery}
+                  onFocus={() => setIsDropdownOpen(true)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setIsDropdownOpen(true);
+                    if (selectedTpsId) {
+                      setSelectedTpsId("");
+                    }
+                  }}
+                  className="field-base pr-10"
+                />
+                
+                {/* Clear button or Chevron dropdown icon */}
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[#154212]">
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedTpsId("");
+                        setIsDropdownOpen(true);
+                      }}
+                      className="hover:bg-zinc-200/50 p-1 rounded-full transition-colors flex items-center justify-center"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="hover:bg-zinc-200/50 p-1 rounded-full transition-colors flex items-center justify-center"
+                  >
+                    <span className="material-symbols-outlined text-[20px] transition-transform duration-200" style={{ transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0)" }}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Floating Options Panel */}
+              {isDropdownOpen && !loadingTps && (
+                <div className="absolute z-50 left-0 w-full mt-1 bg-white border border-[#e0ead9] rounded-xl shadow-xl max-h-60 overflow-y-auto animate-fade-in py-1">
+                  {filteredTpsList.length > 0 ? (
+                    filteredTpsList.map((tps) => {
+                      const isSelected = selectedTpsId === tps._id;
+                      return (
+                        <button
+                          key={tps._id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedTpsId(tps._id);
+                            setSearchQuery(tps.nama_tps);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center justify-between ${
+                            isSelected
+                              ? "bg-[#154212]/10 text-[#154212] font-semibold"
+                              : "text-zinc-700 hover:bg-[#fafef8] hover:text-[#154212]"
+                          }`}
+                        >
+                          <span>{tps.nama_tps}</span>
+                          {isSelected && (
+                            <span className="material-symbols-outlined text-sm text-[#154212]">check</span>
+                          )}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="px-4 py-3 text-sm text-zinc-400 font-medium text-center">
+                      Tidak ada TPS "{searchQuery}" ditemukan
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Koordinat */}
