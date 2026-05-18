@@ -179,7 +179,7 @@ export default function AdminTpuPage() {
       <section className="rounded-xl border border-[#e4e4de] bg-white shadow-[0_10px_28px_rgba(0,0,0,0.04)]">
         <div className="flex flex-col gap-5 border-b border-[#eee9df] p-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="font-headline text-lg font-bold text-[#154212]">Daftar TPS/TPA (Database)</h2>
+            <h2 className="font-headline text-lg font-bold text-[#154212]">Daftar TPS/TPA</h2>
             <p className="mt-1 text-sm text-zinc-500">List fasilitas yang terdaftar di database sistem.</p>
           </div>
           <button 
