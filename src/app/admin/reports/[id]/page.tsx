@@ -79,6 +79,30 @@ export default function AdminReportDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!confirm("Apakah Anda yakin ingin menghapus laporan ini secara permanen? Data yang dihapus tidak dapat dikembalikan.")) return;
+    setIsUpdating(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api"}/tps/reports/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        alert("Laporan berhasil dihapus.");
+        router.push("/admin/reports");
+      } else {
+        alert("Gagal menghapus laporan.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat menghapus laporan.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   if (loading) return <div className="p-8 text-center text-zinc-500 font-bold">Memuat Detail Laporan...</div>;
   if (!report) return <div className="p-8 text-center text-zinc-500 font-bold">Data tidak ditemukan.</div>;
 
@@ -148,20 +172,29 @@ export default function AdminReportDetailPage() {
 
           {/* Sidebar / Actions */}
           <div className="w-full lg:w-[350px] space-y-6">
-             <div className="flex gap-3">
+             <div className="flex flex-col gap-3">
+               <div className="flex gap-3">
+                 <button 
+                   onClick={() => handleUpdate('status', 'rejected')}
+                   disabled={isUpdating}
+                   className="flex-1 py-3 px-4 bg-[#fde7e6] hover:bg-[#f8d0d0] text-[#b84a4a] font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-colors active:scale-95 disabled:opacity-50"
+                 >
+                   <span className="material-symbols-outlined text-[18px]">cancel</span> Tolak
+                 </button>
+                 <button 
+                   onClick={() => handleUpdate('status', 'verified')}
+                   disabled={isUpdating}
+                   className="flex-1 py-3 px-4 bg-[#154212] hover:bg-[#0f2e0d] text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-green-900/20 active:scale-95 disabled:opacity-50"
+                 >
+                   <span className="material-symbols-outlined text-[18px]">check_circle</span> Verifikasi
+                 </button>
+               </div>
                <button 
-                 onClick={() => handleUpdate('status', 'rejected')}
+                 onClick={handleDelete}
                  disabled={isUpdating}
-                 className="flex-1 py-3 px-4 bg-[#fde7e6] hover:bg-[#f8d0d0] text-[#b84a4a] font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-colors active:scale-95 disabled:opacity-50"
+                 className="w-full py-3 px-4 bg-transparent border-2 border-red-500 hover:bg-red-500 hover:text-white text-red-500 font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-colors active:scale-95 disabled:opacity-50"
                >
-                 <span className="material-symbols-outlined text-[18px]">delete</span> Tolak Laporan
-               </button>
-               <button 
-                 onClick={() => handleUpdate('status', 'verified')}
-                 disabled={isUpdating}
-                 className="flex-1 py-3 px-4 bg-[#154212] hover:bg-[#0f2e0d] text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-green-900/20 active:scale-95 disabled:opacity-50"
-               >
-                 <span className="material-symbols-outlined text-[18px]">check_circle</span> Verifikasi
+                 <span className="material-symbols-outlined text-[18px]">delete_forever</span> Hapus Laporan
                </button>
              </div>
 
