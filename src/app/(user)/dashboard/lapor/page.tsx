@@ -21,6 +21,90 @@ export default function LaporTPUPage() {
   const [locationCoords, setLocationCoords] = useState<{lat: number, lng: number} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Camera states and refs
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  // Fetch initial geolocation and watch for active camera cleanup
+  React.useEffect(() => {
+    detectLocation();
+    
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  const detectLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationCoords({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting initial location:", error);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+  };
+
+  const startCamera = async () => {
+    setIsCameraActive(true);
+    setCameraError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err: any) {
+      console.error("Error accessing camera:", err);
+      setCameraError("Gagal mengakses kamera. Pastikan izin kamera telah diberikan.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const capturedFile = new File([blob], `photo_${Date.now()}.jpg`, {
+              type: "image/jpeg",
+            });
+            setFile(capturedFile);
+            setPreview(URL.createObjectURL(capturedFile));
+            setShowMap(true);
+            stopCamera();
+          }
+        }, "image/jpeg", 0.9);
+      }
+    }
+  };
+
   React.useEffect(() => {
     const fetchTps = async () => {
       setLoadingTps(true);
@@ -214,20 +298,22 @@ export default function LaporTPUPage() {
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 w-full justify-center max-w-xs" onClick={(e) => e.stopPropagation()}>
-                {[
-                  { icon: "photo_camera", label: "Ambil Foto" },
-                  { icon: "upload_file", label: "Upload Foto" },
-                ].map(({ icon, label }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 bg-[#eaf6e0] hover:bg-[#d4efbf] text-[#154212] py-2.5 px-4 rounded-xl font-bold font-headline text-sm transition-colors flex items-center justify-center gap-2"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">{icon}</span>
-                    {label}
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  onClick={startCamera}
+                  className="flex-1 bg-[#eaf6e0] hover:bg-[#d4efbf] text-[#154212] py-2.5 px-4 rounded-xl font-bold font-headline text-sm transition-colors flex items-center justify-center gap-2 animate-fade-in"
+                >
+                  <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+                  Ambil Foto
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 bg-[#eaf6e0] hover:bg-[#d4efbf] text-[#154212] py-2.5 px-4 rounded-xl font-bold font-headline text-sm transition-colors flex items-center justify-center gap-2 animate-fade-in"
+                >
+                  <span className="material-symbols-outlined text-[18px]">upload_file</span>
+                  Upload Foto
+                </button>
               </div>
             </div>
 
@@ -256,15 +342,24 @@ export default function LaporTPUPage() {
                 <label className="block font-headline text-sm font-bold text-[#2a2c2a]">
                   Koordinat Laporan (Otomatis/Peta)
                 </label>
-                {locationCoords && (
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={detectLocation}
+                    className="text-xs font-bold text-[#154212] hover:underline flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">my_location</span>
+                    {locationCoords ? "Deteksi Ulang" : "Deteksi Lokasi"}
+                  </button>
                   <button
                     type="button"
                     onClick={() => setShowMap(true)}
-                    className="text-xs font-bold text-[#154212] hover:underline"
+                    className="text-xs font-bold text-[#154212] hover:underline flex items-center gap-1"
                   >
-                    Ubah Koordinat
+                    <span className="material-symbols-outlined text-[14px]">map</span>
+                    Ubah di Peta
                   </button>
-                )}
+                </div>
               </div>
               <div className={`w-full px-4 py-3 rounded-xl font-mono text-sm border-[1.5px] transition-all ${
                 locationCoords
@@ -273,7 +368,7 @@ export default function LaporTPUPage() {
               }`}>
                 {locationCoords
                   ? `${locationCoords.lat.toFixed(6)}, ${locationCoords.lng.toFixed(6)}`
-                  : "Koordinat belum ditentukan (akan otomatis diambil jika kosong)"}
+                  : "Koordinat belum ditentukan (menghubungi GPS...)"}
               </div>
             </div>
 
@@ -330,6 +425,77 @@ export default function LaporTPUPage() {
           }}
           onCancel={() => setShowMap(false)}
         />
+      )}
+
+      {isCameraActive && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden w-full max-w-md shadow-2xl relative">
+            <div className="p-5 border-b border-zinc-800 flex justify-between items-center bg-zinc-950">
+              <h3 className="font-headline font-bold text-white text-base flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#91f78e]">photo_camera</span>
+                Ambil Foto Kondisi TPS
+              </h3>
+              <button 
+                type="button"
+                onClick={stopCamera}
+                className="text-zinc-400 hover:text-white transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="relative aspect-[4/3] bg-black flex items-center justify-center">
+              {cameraError ? (
+                <div className="p-6 text-center text-red-400 text-sm font-semibold flex flex-col items-center gap-3">
+                  <span className="material-symbols-outlined text-4xl">no_photography</span>
+                  {cameraError}
+                  <button 
+                    type="button"
+                    onClick={startCamera}
+                    className="mt-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                  >
+                    Coba Lagi
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <video 
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Guide overlay */}
+                  <div className="absolute inset-6 border-2 border-dashed border-white/30 rounded-2xl pointer-events-none flex items-center justify-center">
+                    <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold bg-black/40 px-3 py-1.5 rounded-full">
+                      Posisikan Sampah di Sini
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="p-6 bg-zinc-950 flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={stopCamera}
+                className="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-bold font-headline text-sm transition-all active:scale-95"
+              >
+                Batal
+              </button>
+              {!cameraError && (
+                <button
+                  type="button"
+                  onClick={capturePhoto}
+                  className="px-6 py-3 bg-[#5ccf3c] hover:bg-[#4eb631] text-zinc-950 rounded-xl font-bold font-headline text-sm transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-[#5ccf3c]/20"
+                >
+                  <span className="material-symbols-outlined text-lg">camera</span>
+                  Ambil Gambar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
