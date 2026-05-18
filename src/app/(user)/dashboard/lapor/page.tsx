@@ -261,7 +261,7 @@ export default function LaporTPUPage() {
       <main className="p-10 lg:p-15 w-full max-w-[1400px] mx-auto bg-[#f5f7f4] min-h-screen font-body">
         {/* Header */}
         <header className="mb-10">
-          <h2 className="text-4xl font-bold text-[#154212] tracking-tight font-display mb-2">
+          <h2 className="font-headline text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
             Lapor Kondisi TPS
           </h2>
           <p className="text-2sm text-zinc-500 font-medium">

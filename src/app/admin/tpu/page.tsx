@@ -119,7 +119,7 @@ export default function AdminTpuPage() {
   })).filter(m => m.lat !== undefined);
 
   return (
-    <div className="space-y-8 font-body p-6">
+    <div className="space-y-8 font-body">
       <style
         dangerouslySetInnerHTML={{
           __html: `

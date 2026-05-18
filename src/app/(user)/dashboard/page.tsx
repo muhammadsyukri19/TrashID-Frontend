@@ -109,7 +109,7 @@ export default function UserDashboardPage() {
       {loadingProfile ? <HeaderSkeleton /> : (
         <header className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-10 animate-fade-in">
           <div>
-            <h2 className="text-4xl font-bold text-[#154212] mb-2">
+            <h2 className="font-headline text-3xl font-extrabold text-[#154212] mb-2">
               Halo, {profile?.fullName?.split(" ")[0] || "Sahabat TrashID"}!
             </h2>
             <p className="text-2sm text-zinc-500 font-medium">

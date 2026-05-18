@@ -128,23 +128,19 @@ export default function ScanTrashPage() {
 
   return (
     <>
-      <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto space-y-8 font-body animate-fade-in">
-        <header className="flex items-center gap-4">
-          <Link
-            href="/dashboard"
-            className="p-2 hover:bg-zinc-200 rounded-full transition-colors text-zinc-400 bg-white shadow-sm"
-          >
-            <span className="material-symbols-outlined">arrow_back</span>
-          </Link>
+      <main className="p-6 lg:p-15 w-full max-w-[1400px] mx-auto bg-[#f5f6f5]">
+        <header className="flex items-center gap-4 mb-10">
           <div>
-            <h1 className="font-headline text-3xl font-extrabold tracking-tight text-[#154212]">
+            <h1 className="font-headline text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
               AI Trash Scanner
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-2sm text-zinc-500 font-medium">
               Pindai sampah Anda untuk instruksi pemilahan yang tepat.
             </p>
           </div>
         </header>
+
+        <section className="overflow-hidden mx-3 lg:mx-30">
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* Left: Scanner Area */}
@@ -295,6 +291,7 @@ export default function ScanTrashPage() {
             </div>
           </div>
         </div>
+        </section>
       </main>
       
       <CameraModal 

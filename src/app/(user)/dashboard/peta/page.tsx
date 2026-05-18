@@ -191,19 +191,19 @@ export default function PetaTPUPage() {
       }}
       />
 
-      <main className="p-8 lg:p-12 w-full max-w-[1000px] mx-auto bg-[#f9f9f9] min-h-screen">
+      <main className="p-6 lg:p-15 w-full max-w-[1400px] mx-auto bg-[#f5f6f5]">
         {/* Header */}
         <header className="mb-10">
-          <h2 className="text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
+          <h2 className="font-headline text-3xl font-extrabold text-[#154212] tracking-tight font-display mb-2">
             Peta TPS Provinsi Aceh
           </h2>
-          <p className="text-[#42493e] font-medium text-lg">
+          <p className="text-2sm text-zinc-500 font-medium">
             Pantau ketersediaan dan lokasi TPS di seluruh wilayah Aceh.
           </p>
         </header>
 
         {/* Search and Dropdown Filters */}
-        <section className="flex flex-col md:flex-row justify-between mb-8 gap-4">
+        <section className="flex flex-col md:flex-row justify-between mb-8 gap-4 mx-3 lg:mx-30">
           <div className="w-full md:max-w-md">
             <input
               type="text"
@@ -244,7 +244,7 @@ export default function PetaTPUPage() {
         </section>
 
         {/* Map Section */}
-        <section className="bg-white rounded-3xl shadow-[0_20px_40px_rgba(21,66,18,0.04)] border border-[#e2e2e2]/50 p-4">
+        <section className="bg-white rounded-3xl shadow-[0_20px_40px_rgba(21,66,18,0.04)] border border-[#e2e2e2]/50 p-4 mx-3 lg:mx-30">
           <div className="relative w-full h-[600px] rounded-2xl overflow-hidden">
             {loading ? (
               <div className="w-full h-full bg-[#f3f3f3] flex flex-col items-center justify-center gap-4 animate-pulse">
@@ -258,7 +258,7 @@ export default function PetaTPUPage() {
         </section>
 
         {/* Map Legend */}
-        <section className="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-[#e2e2e2]/50">
+        <section className="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-[#e2e2e2]/50 mx-3 lg:mx-30">
           <h4 className="font-bold text-[#154212] mb-4">Keterangan Kapasitas:</h4>
           <div className="flex flex-wrap gap-8">
             <div className="flex items-center">

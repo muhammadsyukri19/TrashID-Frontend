@@ -1,6 +1,7 @@
-"use client"; // Menandakan ini adalah Client Component
+"use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export default function UbahKataSandiPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -19,230 +20,197 @@ export default function UbahKataSandiPage() {
   };
 
   return (
-    <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,0,24&display=swap');
+    <main className="flex flex-col font-body text-[#1a1c1c] p-6 lg:p-15 animate-fade-in">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-[13px] font-bold text-zinc-500 mb-6 shrink-0">
+        <Link
+          href="/dashboard/settings"
+          className="hover:text-[#154212] transition-colors"
+        >
+          Setelan
+        </Link>
+        <span>/</span>
+        <Link
+          href="/dashboard/settings/privacy"
+          className="hover:text-[#154212] transition-colors"
+        >
+          Privasi
+        </Link>
+        <span>/</span>
+        <span className="text-[#154212]">Ubah Kata Sandi</span>
+      </div>
 
-          .font-headline, .font-display { font-family: 'Manrope', sans-serif; }
-          .font-body { font-family: 'Inter', sans-serif; }
-
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          }
-
-          .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-          }
-
-          .container h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #154212;
-            margin-bottom: 20px;
-          }
-
-          .form-group {
-            margin-bottom: 20px;
-          }
-
-          .form-group label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #42493e;
-            margin-bottom: 8px;
-            display: block;
-          }
-
-          .form-group input {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            border-radius: 8px;
-            border: 1px solid #e2e2e2;
-            margin-bottom: 10px;
-            outline: none;
-          }
-
-          .form-group input:focus {
-            border-color: #154212;
-          }
-
-          .password-eye-icon {
-            cursor: pointer;
-            position: absolute;
-            right: 10px;
-            top: 40%;
-          }
-
-          .security-info {
-            background-color: #006e1c;
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-          }
-
-          .security-info h4 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 15px;
-          }
-
-          .button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-          }
-
-          .button-container button {
-            padding: 10px 20px;
-            font-size: 14px;
-            border-radius: 8px;
-            cursor: pointer;
-          }
-
-          .button-container .cancel-btn {
-            background-color: #e57373;
-            color: white;
-            border: none;
-          }
-
-          .button-container .save-btn {
-            background-color: #154212;
-            color: white;
-            border: none;
-          }
-
-          .button-container .cancel-btn:hover {
-            background-color: #d32f2f;
-          }
-
-          .button-container .save-btn:hover {
-            background-color: #006e1c;
-          }
-
-          .help-section {
-            margin-top: 30px;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-          }
-
-          .help-section h4 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #154212;
-            margin-bottom: 10px;
-          }
-
-          .help-section p {
-            font-size: 14px;
-            color: #42493e;
-          }
-        `,
-      }}
-      />
-
-      <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto bg-[#f9f9f9] min-h-screen">
-        <div className="container">
-          <h2 className="font-display">Ubah Kata Sandi</h2>
-          <p className="font-body text-lg text-[#42493e] mb-8">
-            Amankan akun Anda dengan mengganti kata sandi secara berkala
-          </p>
-
-          {/* Formulir Ubah Kata Sandi */}
-          <div className="form-group">
-            <label>Kata Sandi Saat Ini</label>
-            <div style={{ position: "relative" }}>
-              <input
-                type={showCurrentPassword ? "text" : "password"}
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Masukkan Kata Sandi"
-              />
-              <span
-                className="material-symbols-outlined password-eye-icon"
-                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-              >
-                {showCurrentPassword ? "visibility_off" : "visibility"}
-              </span>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>Kata Sandi Baru</label>
-            <div style={{ position: "relative" }}>
-              <input
-                type={showNewPassword ? "text" : "password"}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Buat Kata Sandi Baru"
-              />
-              <span
-                className="material-symbols-outlined password-eye-icon"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-              >
-                {showNewPassword ? "visibility_off" : "visibility"}
-              </span>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>Konfirmasi Kata Sandi Baru</label>
-            <div style={{ position: "relative" }}>
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                placeholder="Ulangi Kata Sandi Baru"
-              />
-              <span
-                className="material-symbols-outlined password-eye-icon"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? "visibility_off" : "visibility"}
-              </span>
-            </div>
-          </div>
-
-          {/* Keamanan Kata Sandi */}
-          <div className="security-info">
-            <h4>Keamanan Kata Sandi</h4>
-            <p>
-              Pastikan kata sandi baru Anda memenuhi kriteria berikut untuk menjaga keamanan akun TrashID Anda:
+      {/* Main Card */}
+      <div className="bg-white border border-zinc-200 rounded-3xl p-8 lg:p-12 w-full flex-1 flex flex-col shadow-sm">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
+          <div>
+            <h1 className="font-extrabold text-3xl tracking-tight text-[#154212] mb-2">
+              Ubah Kata Sandi
+            </h1>
+            <p className="text-[14px] text-zinc-500">
+              Amankan akun Anda dengan mengganti kata sandi secara berkala.
             </p>
-            <ul>
-              <li>Minimal 8 karakter unik</li>
-              <li>Komposisi huruf besar dan kecil</li>
-              <li>Setidaknya ada satu angka (0-9)</li>
-              <li>Karakter spesial (misal: @, #, $, !)</li>
-            </ul>
-          </div>
-
-          {/* Tombol */}
-          <div className="button-container">
-            <button className="cancel-btn" onClick={() => alert("Perubahan dibatalkan")}>Batal</button>
-            <button className="save-btn" onClick={handleSubmit}>Simpan Perubahan</button>
-          </div>
-
-          {/* Bantuan */}
-          <div className="help-section">
-            <h4>Butuh bantuan?</h4>
-            <p>lupa kata sandi lama? Hubungi pusat bantuan Kami</p>
-            <button className="save-btn">Hubungi bantuan</button>
           </div>
         </div>
-      </main>
-    </>
+
+        {/* Form */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="flex flex-col gap-6">
+            {/* Kata Sandi Saat Ini */}
+            <div className="flex flex-col">
+              <label className="text-[14px] font-extrabold text-[#1A1C1C] mb-2">
+                Kata Sandi Saat Ini
+              </label>
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Masukkan kata sandi saat ini"
+                  className="w-full h-12 px-4 pr-12 text-[14px] font-medium text-zinc-700 border border-zinc-200 rounded-xl outline-none focus:border-[#154212] focus:ring-2 focus:ring-[#154212]/10 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowCurrentPassword(!showCurrentPassword)
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-[#154212] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[22px]">
+                    {showCurrentPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Kata Sandi Baru */}
+            <div className="flex flex-col">
+              <label className="text-[14px] font-extrabold text-[#1A1C1C] mb-2">
+                Kata Sandi Baru
+              </label>
+              <div className="relative">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Buat kata sandi baru"
+                  className="w-full h-12 px-4 pr-12 text-[14px] font-medium text-zinc-700 border border-zinc-200 rounded-xl outline-none focus:border-[#154212] focus:ring-2 focus:ring-[#154212]/10 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-[#154212] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[22px]">
+                    {showNewPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Konfirmasi Kata Sandi Baru */}
+            <div className="flex flex-col">
+              <label className="text-[14px] font-extrabold text-[#1A1C1C] mb-2">
+                Konfirmasi Kata Sandi Baru
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  placeholder="Ulangi kata sandi baru"
+                  className="w-full h-12 px-4 pr-12 text-[14px] font-medium text-zinc-700 border border-zinc-200 rounded-xl outline-none focus:border-[#154212] focus:ring-2 focus:ring-[#154212]/10 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-[#154212] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[22px]">
+                    {showConfirmPassword ? "visibility_off" : "visibility"}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => alert("Perubahan dibatalkan")}
+                className="px-6 py-3 border border-zinc-300 text-zinc-700 hover:border-red-300 hover:text-red-600 hover:bg-red-50 font-bold text-[13px] rounded-lg transition-all shadow-sm"
+              >
+                Batal
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="px-6 py-3 bg-[#154212] text-white font-bold text-[13px] rounded-lg hover:bg-[#0f330d] transition-all shadow-sm"
+              >
+                Simpan Perubahan
+              </button>
+            </div>
+          </div>
+
+          {/* Security Info */}
+          <div className="flex flex-col gap-6">
+            <div className="bg-[#154212] text-white rounded-3xl p-6 shadow-sm">
+              <h4 className="text-[18px] font-extrabold mb-3">
+                Keamanan Kata Sandi
+              </h4>
+              <p className="text-[14px] text-white/80 leading-relaxed mb-5">
+                Pastikan kata sandi baru Anda memenuhi kriteria berikut untuk
+                menjaga keamanan akun TrashID Anda.
+              </p>
+
+              <ul className="space-y-3 text-[14px] text-white/90">
+                <li className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[20px]">
+                    check_circle
+                  </span>
+                  <span>Minimal 8 karakter unik</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[20px]">
+                    check_circle
+                  </span>
+                  <span>Komposisi huruf besar dan kecil</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[20px]">
+                    check_circle
+                  </span>
+                  <span>Setidaknya ada satu angka (0-9)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[20px]">
+                    check_circle
+                  </span>
+                  <span>Karakter spesial, misalnya @, #, $, atau !</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Help Section */}
+            <div className="bg-zinc-50 border border-zinc-200 rounded-3xl p-6 shadow-sm">
+              <h4 className="text-[18px] font-extrabold text-[#1A1C1C] mb-3">
+                Butuh bantuan?
+              </h4>
+              <p className="text-[14px] text-zinc-500 leading-relaxed mb-6">
+                Lupa kata sandi lama? Hubungi pusat bantuan kami untuk mendapat
+                arahan lebih lanjut.
+              </p>
+              <button className="px-6 py-2 bg-[#154212] text-white font-bold text-[13px] rounded-lg hover:bg-[#0f330d] transition-all shadow-sm">
+                Hubungi Bantuan
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import LogoutModal from "../LogoutModal";
@@ -58,13 +59,13 @@ export default function AdminSidebar() {
         }`}
       >
         <div>
-          <div className="px-6 py-8 flex items-center gap-3 text-2xl font-black text-[#154212] font-headline">
-            <span
-              className="material-symbols-outlined text-3xl"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              eco
-            </span>
+          <div className="px-8 py-8 flex items-center gap-2 text-3xl font-black text-[#154212] font-headline">
+            <Image
+              src="/logo.png"
+              alt="Logo TrashID"
+              width={50}
+              height={50}
+            />
             <span>TrashID</span>
           </div>
 

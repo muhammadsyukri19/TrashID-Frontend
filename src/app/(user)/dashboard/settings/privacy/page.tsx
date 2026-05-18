@@ -1,7 +1,7 @@
-"use client"; // Menandakan ini adalah Client Component
+"use client";
 
 import React, { useState } from "react";
-import Link from "next/link"; // Tambahkan import Link di bagian atas file
+import Link from "next/link";
 
 export default function PrivasiPage() {
   const [isTwoFactorActive, setIsTwoFactorActive] = useState(true);
@@ -9,191 +9,155 @@ export default function PrivasiPage() {
   const [isProfilePublic, setIsProfilePublic] = useState(true);
 
   return (
-    <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,0,24&display=swap');
+    <main className="flex flex-col font-body text-[#1a1c1c] p-6 lg:p-15 animate-fade-in">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-[13px] font-bold text-zinc-500 mb-6 shrink-0">
+        <Link
+          href="/dashboard/settings"
+          className="hover:text-[#154212] transition-colors"
+        >
+          Setelan
+        </Link>
+        <span>/</span>
+        <span className="text-[#154212]">Privasi</span>
+      </div>
 
-          .font-headline, .font-display { font-family: 'Manrope', sans-serif; }
-          .font-body { font-family: 'Inter', sans-serif; }
+      {/* Main Card */}
+      <div className="bg-white border border-zinc-200 rounded-3xl p-8 lg:p-12 w-full flex-1 flex flex-col shadow-sm">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
+          <div>
+            <h1 className="font-extrabold text-3xl tracking-tight text-[#154212] mb-2">
+              Privasi
+            </h1>
+            <p className="text-[14px] text-zinc-500">
+              Kelola keamanan akun, privasi data, dan pengaturan visibilitas
+              profil Anda.
+            </p>
+          </div>
+        </div>
 
-          .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          }
-
-          .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-          }
-
-          .container h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #154212;
-            margin-bottom: 20px;
-          }
-
-          .section {
-            margin-bottom: 20px;
-          }
-
-          .section h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #154212;
-            margin-bottom: 10px;
-          }
-
-          .section p {
-            font-size: 14px;
-            color: #42493e;
-            margin-bottom: 15px;
-          }
-
-          .toggle-switch {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          }
-
-          .toggle-switch label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #42493e;
-          }
-
-          .toggle-switch input {
-            width: 40px;
-            height: 20px;
-            border-radius: 20px;
-            background-color: #ddd;
-            cursor: pointer;
-          }
-
-          .toggle-switch input:checked {
-            background-color: #154212;
-          }
-
-          .commitment-card {
-            background-color: #006e1c;
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-          }
-
-          .commitment-card h4 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 15px;
-          }
-
-          .danger-zone {
-            background-color: #e57373;
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-          }
-
-          .danger-zone h4 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 15px;
-          }
-        `,
-      }}
-      />
-
-      <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto bg-[#f9f9f9] min-h-screen">
-        <div className="container">
-          <h2 className="font-display">Privasi</h2>
-          <p className="font-body text-lg text-[#42493e] mb-8">
-            Kelola bagaimana anda menerima pemberitahuan.
-          </p>
-
+        {/* Privacy Settings */}
+        <div className="grid grid-cols-1 gap-6">
           {/* Ubah Kata Sandi */}
-          <div className="section">
-            <h3>Ubah Kata Sandi</h3>
-            <p>Terakhir diubah 3 bulan yang lalu</p>
-            <button className="bg-[#154212] text-white px-6 py-3 rounded-md">
-              <Link href="/dashboard/settings/privacy/change-password">Perbarui Sekarang</Link>
-            </button>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-zinc-200 rounded-2xl p-6 hover:border-[#154212]/30 transition-all">
+            <div>
+              <h3 className="text-[15px] font-extrabold text-[#1A1C1C] mb-1">
+                Ubah Kata Sandi
+              </h3>
+              <p className="text-[14px] text-zinc-500">
+                Terakhir diubah 3 bulan yang lalu.
+              </p>
+            </div>
+
+            <Link
+              href="/dashboard/settings/privacy/change-password"
+              className="inline-flex items-center justify-center px-6 py-2 bg-[#154212] text-white font-bold text-[13px] rounded-lg hover:bg-[#0f330d] transition-all shadow-sm"
+            >
+              Perbarui Sekarang
+            </Link>
           </div>
 
           {/* Autentikasi Dua Faktor */}
-          <div className="section">
-            <h3>Autentikasi Dua Faktor</h3>
-            <p>Meningkatkan akun via SMS atau App</p>
-            <div className="toggle-switch">
-              <label htmlFor="two-factor">Aktif</label>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-zinc-200 rounded-2xl p-6 hover:border-[#154212]/30 transition-all">
+            <div>
+              <h3 className="text-[15px] font-extrabold text-[#1A1C1C] mb-1">
+                Autentikasi Dua Faktor
+              </h3>
+              <p className="text-[14px] text-zinc-500">
+                Tingkatkan keamanan akun melalui SMS atau aplikasi autentikasi.
+              </p>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 id="two-factor"
                 checked={isTwoFactorActive}
                 onChange={() => setIsTwoFactorActive(!isTwoFactorActive)}
+                className="sr-only peer"
               />
-            </div>
+              <div className="w-12 h-6 bg-zinc-200 rounded-full peer peer-checked:bg-[#154212] after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:w-5 after:h-5 after:rounded-full after:transition-all peer-checked:after:translate-x-6"></div>
+            </label>
           </div>
 
           {/* Keamanan Akun */}
-          <div className="section">
-            <h3>Keamanan Akun</h3>
-            <div className="toggle-switch">
-              <label htmlFor="location-tracking">Izinkan Pelacakan Lokasi</label>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-zinc-200 rounded-2xl p-6 hover:border-[#154212]/30 transition-all">
+            <div>
+              <h3 className="text-[15px] font-extrabold text-[#1A1C1C] mb-1">
+                Keamanan Akun
+              </h3>
+              <p className="text-[14px] text-zinc-500">
+                Izinkan pelacakan lokasi untuk mendukung keamanan dan aktivitas
+                akun.
+              </p>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 id="location-tracking"
                 checked={isLocationTracking}
                 onChange={() => setIsLocationTracking(!isLocationTracking)}
+                className="sr-only peer"
               />
-            </div>
+              <div className="w-12 h-6 bg-zinc-200 rounded-full peer peer-checked:bg-[#154212] after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:w-5 after:h-5 after:rounded-full after:transition-all peer-checked:after:translate-x-6"></div>
+            </label>
           </div>
 
           {/* Visibilitas Data */}
-          <div className="section">
-            <h3>Visibilitas Data</h3>
-            <div className="toggle-switch">
-              <label htmlFor="public-profile">Tampilkan Profil ke Publik</label>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-zinc-200 rounded-2xl p-6 hover:border-[#154212]/30 transition-all">
+            <div>
+              <h3 className="text-[15px] font-extrabold text-[#1A1C1C] mb-1">
+                Visibilitas Data
+              </h3>
+              <p className="text-[14px] text-zinc-500">
+                Atur apakah profil Anda dapat ditampilkan kepada publik.
+              </p>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 id="public-profile"
                 checked={isProfilePublic}
                 onChange={() => setIsProfilePublic(!isProfilePublic)}
+                className="sr-only peer"
               />
-            </div>
+              <div className="w-12 h-6 bg-zinc-200 rounded-full peer peer-checked:bg-[#154212] after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-white after:w-5 after:h-5 after:rounded-full after:transition-all peer-checked:after:translate-x-6"></div>
+            </label>
           </div>
+        </div>
 
-          {/* Commitmen Privasi */}
-          <div className="commitment-card">
-            <h4>Komitmen Privasi</h4>
-            <p>
+        {/* Bottom Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10 pt-10 border-t border-zinc-100">
+          {/* Komitmen Privasi */}
+          <div className="bg-[#154212] text-white rounded-3xl p-6 shadow-sm">
+            <h4 className="text-[18px] font-extrabold mb-3">
+              Komitmen Privasi
+            </h4>
+            <p className="text-[14px] text-white/80 leading-relaxed">
               Di TrashID, kami percaya bahwa data Anda adalah milik Anda. Kami
-              menggunakan informasi yang dikumpulkan semata-mata untuk meningkatkan
-              efisiensi logistik sampah komunitas.
+              menggunakan informasi yang dikumpulkan semata-mata untuk
+              meningkatkan efisiensi logistik sampah komunitas.
             </p>
           </div>
 
           {/* Zona Berbahaya */}
-          <div className="danger-zone">
-            <h4>Zona Berbahaya</h4>
-            <p>
-              Penghapusan akun bersifat permanen. Semua riwayat akun kebijakan dan
-              data pengolahan sampah akan hilang.
+          <div className="bg-red-50 border border-red-200 rounded-3xl p-6 shadow-sm">
+            <h4 className="text-[18px] font-extrabold text-red-700 mb-3">
+              Zona Berbahaya
+            </h4>
+            <p className="text-[14px] text-red-500 leading-relaxed mb-6">
+              Penghapusan akun bersifat permanen. Semua riwayat akun,
+              kebijakan, dan data pengolahan sampah akan hilang.
             </p>
-            <button className="bg-red-600 text-white px-6 py-3 rounded-md">
+            <button className="px-6 py-2 bg-red-600 text-white font-bold text-[13px] rounded-lg hover:bg-red-700 transition-all shadow-sm">
               Minta Penghapusan Akun
             </button>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }

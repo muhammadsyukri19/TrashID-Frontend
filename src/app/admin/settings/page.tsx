@@ -11,10 +11,10 @@ export default function UserSettingsMenuPage() {
   ];
 
   return (
-    <div className="w-full h-full min-h-[calc(100vh-80px)] flex flex-col font-body text-[#1a1c1c] p-6 lg:p-8 animate-fade-in">
+    <div className="space-y-8  flex flex-col font-body text-[#1a1c1c] animate-fade-in">
       <div className="mb-8 shrink-0">
-        <h1 className="font-extrabold text-3xl tracking-tight text-[#154212]">Setelan</h1>
-        <p className="text-[13px] text-zinc-500 mt-2 font-medium uppercase tracking-widest">Lebih lanjut</p>
+        <h1 className="font-headline font-extrabold text-3xl tracking-tight text-[#154212]">Setelan</h1>
+        <p className="mt-2 max-w-2xl text-sm text-zinc-500">Lebih lanjut</p>
       </div>
 
       <div className="flex flex-col gap-4 w-full">

@@ -72,7 +72,7 @@ export default function UserProfileEditPage() {
   const displayImage = preview || profile.profilePicture || defaultAvatar;
 
   return (
-    <div className="w-full h-full min-h-[calc(100vh-80px)] flex flex-col font-body text-[#1a1c1c] p-6 lg:p-8 animate-fade-in">
+    <main className="flex flex-col font-body text-[#1a1c1c] p-6 lg:p-15 animate-fade-in">
       <div className="flex items-center gap-2 text-[13px] font-bold text-zinc-500 mb-6 shrink-0">
         <Link href="/dashboard/settings" className="hover:text-[#154212] transition-colors">Setelan</Link>
         <span>/</span>
@@ -150,7 +150,7 @@ export default function UserProfileEditPage() {
            </form>
         )}
       </div>
-    </div>
+    </main>
   );
 }
 
