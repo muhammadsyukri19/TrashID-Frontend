@@ -65,7 +65,7 @@ export default function UserLayout({
       </div>
 
       {/* Main Content Workspace */}
-      <div className="lg:ml-72 flex-1 min-h-screen transition-all duration-300">
+      <div className="lg:ml-72 flex-1 min-h-screen transition-all duration-300 animate-in fade-in zoom-in-95 duration-700">
         {children}
       </div>
     </div>

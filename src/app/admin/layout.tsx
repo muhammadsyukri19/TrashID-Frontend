@@ -114,7 +114,7 @@ export default function AdminLayout({
         </header>
 
         {/* Content Area */}
-        <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto flex-1">
+        <main className="p-8 lg:p-12 w-full max-w-[1400px] mx-auto flex-1 animate-in fade-in zoom-in-95 duration-700">
           {children}
         </main>
       </div>
