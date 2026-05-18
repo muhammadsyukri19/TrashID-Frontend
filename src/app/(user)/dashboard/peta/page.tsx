@@ -82,6 +82,51 @@ export default function PetaTPUPage() {
     fetchTPSData();
   }, []);
 
+  // State for Map Zoom
+  const [mapZoom, setMapZoom] = useState(8);
+
+  // Sync Map Center & Zoom based on search query or selected city
+  useEffect(() => {
+    const queryLower = searchQuery.toLowerCase().trim();
+    
+    if (queryLower === "") {
+      if (selectedCity === "") {
+        setMapCenter(DEFAULT_CENTER);
+        setMapZoom(8);
+      } else {
+        const foundCity = ACEH_CITIES.find(c => c.name === selectedCity);
+        if (foundCity) {
+          setMapCenter([foundCity.lat, foundCity.lng]);
+          setMapZoom(13);
+        }
+      }
+      return;
+    }
+
+    // 1. Check if search query matches a city/city name in Aceh
+    const foundCity = ACEH_CITIES.find(
+      (c) => c.name.toLowerCase().includes(queryLower) || queryLower.includes(c.name.toLowerCase())
+    );
+
+    if (foundCity) {
+      setMapCenter([foundCity.lat, foundCity.lng]);
+      setMapZoom(13);
+      return;
+    }
+
+    // 2. Check if search query matches any specific marker (TPS)
+    const matchedMarkers = allMarkers.filter((marker) => {
+      const nameLower = marker.name.toLowerCase();
+      const addressLower = marker.address.toLowerCase();
+      return nameLower.includes(queryLower) || addressLower.includes(queryLower);
+    });
+
+    if (matchedMarkers.length > 0) {
+      setMapCenter([matchedMarkers[0].lat, matchedMarkers[0].lng]);
+      setMapZoom(14); // Zoom in closer to the found marker
+    }
+  }, [searchQuery, selectedCity, allMarkers]);
+
   // Filter markers based on selected city and search query
   const displayedMarkers = allMarkers.filter((marker) => {
     const cityLower = selectedCity.toLowerCase();
@@ -101,23 +146,10 @@ export default function PetaTPUPage() {
   });
 
   // Handle City Change
-  const [mapZoom, setMapZoom] = useState(8);
-
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const city = e.target.value;
     setSelectedCity(city);
     setUserLocation(null); 
-    
-    if (city === "") {
-      setMapCenter(DEFAULT_CENTER);
-      setMapZoom(8);
-    } else {
-      const foundCity = ACEH_CITIES.find(c => c.name === city);
-      if (foundCity) {
-        setMapCenter([foundCity.lat, foundCity.lng]);
-        setMapZoom(13); // Zoom in closer when a city is selected
-      }
-    }
   };
 
   // Get Geolocation
